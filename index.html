@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planberry BC K-5 Teacher Planner</title>
+    <title>Kawaii BC K-5 Teacher Planner</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,6 +75,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
         }
 
         body {
@@ -114,12 +115,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-
-        .kawaii-berry-img {
-            width: 32px;
-            height: 32px;
-            vertical-align: middle;
         }
 
         .nav-menu {
@@ -238,6 +233,7 @@
             outline: none;
             background: #FAFAFA;
             color: var(--text-main);
+            user-select: text;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -275,6 +271,7 @@
             font-size: 2.5rem;
             cursor: move;
             z-index: 500;
+            user-select: none;
         }
 
         /* Dashboard View Layout */
@@ -288,196 +285,35 @@
         .dash-notes { grid-column: span 4; }
         .dash-calendar { grid-column: span 6; }
         .dash-alerts { grid-column: span 6; }
-        .dash-clock { grid-column: span 4; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .dash-month-calendar { grid-column: span 8; }
 
-        /* Timetable Grid & Block Styling */
-        .timetable-container {
-            display: flex;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            box-shadow: 0 8px 20px var(--shadow-color);
-        }
-
-        .timetable-times-col {
-            width: 90px;
-            background: var(--secondary);
-            border-right: 2px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .timetable-time-header {
-            height: 45px;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-title);
-            font-weight: bold;
-            color: var(--primary-dark);
-            font-size: 0.85rem;
-        }
-
-        .timetable-time-slot-label {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: var(--text-muted);
-            border-bottom: 1px dashed var(--border-color);
-            font-family: var(--font-title);
-        }
-
-        .timetable-days-wrapper {
-            flex: 1;
+        /* Timetable & Calendar */
+        .timetable-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: 80px repeat(5, 1fr);
+            gap: 10px;
             overflow-x: auto;
         }
 
-        .timetable-day-col {
-            border-right: 1px solid var(--border-color);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
+        .time-col { font-weight: bold; text-align: center; color: var(--text-muted); }
+        .day-header { text-align: center; font-family: var(--font-title); padding: 10px; background: var(--secondary); border-radius: 12px; }
 
-        .timetable-day-col:last-child {
-            border-right: none;
-        }
-
-        .timetable-day-header {
-            height: 45px;
-            background: var(--secondary);
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-title);
-            color: var(--primary-dark);
-            font-size: 1rem;
-        }
-
-        .timetable-day-slots {
-            position: relative;
-            height: 880px; /* 22 slots of 40px (8:00 AM - 7:00 PM) */
-            background-size: 100% 40px;
-            background-image: linear-gradient(to bottom, transparent 39px, var(--border-color) 40px);
-        }
-
-        .timetable-day-slots.drag-over {
-            background-color: rgba(255, 182, 193, 0.15);
-        }
-
-        /* 4-point move arrow cursor on block hover */
-        .timetable-class-block {
-            position: absolute;
-            left: 4px;
-            right: 4px;
-            border-radius: 10px;
-            padding: 6px 10px;
-            font-family: var(--font-title);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            cursor: move; /* Hover 4-point arrow cursor */
-            z-index: 5;
-            user-select: none;
-        }
-
-        /* Hovering effect */
-        .timetable-class-block:hover {
-            transform: scale(1.02);
-            z-index: 10;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-
-        /* Class Block Specific Styling */
-        .timetable-class-block.type-class {
-            color: #FFFFFF;
-        }
-
-        /* Non-Class Types: White background fill + thick colored outer ring */
-        .timetable-class-block.type-ring {
-            background-color: #FFFFFF !important;
-        }
-
-        .timetable-block-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            line-height: 1.2;
-            word-break: break-word;
-        }
-
-        .timetable-block-meta {
-            font-size: 0.75rem;
-            opacity: 0.9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
-        }
-
-        .delete-block-btn {
-            background: rgba(0,0,0,0.2);
-            border: none;
-            color: currentColor;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.65rem;
-        }
-
-        .delete-block-btn:hover {
-            background: rgba(255,0,0,0.6);
-            color: white;
-        }
-
-        /* Interactive Dashboard Month Calendar Grid */
-        .dash-month-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .dash-month-day-head {
-            font-family: var(--font-title);
-            font-size: 0.8rem;
-            color: var(--primary-dark);
-            padding: 4px;
-        }
-
-        .dash-month-cell {
-            padding: 8px 4px;
-            font-size: 0.85rem;
-            border-radius: 10px;
+        .time-slot {
+            min-height: 80px;
             background: #FAFAFA;
-            border: 1px solid var(--border-color);
+            border: 1.5px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 5px;
+            position: relative;
         }
 
-        .dash-month-cell.today {
-            background: var(--primary-dark);
-            color: white;
-            font-weight: bold;
-        }
-
-        .dash-month-cell.empty {
-            background: transparent;
-            border: none;
+        .schedule-block {
+            background: var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         /* Modal Overlay */
@@ -501,33 +337,6 @@
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
-        }
-
-        /* Color Picker Styling */
-        .color-picker-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            padding: 0;
-            background: none;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        input[type="color"]::-webkit-color-swatch {
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
         }
 
         /* Rich Text Editor Tools */
@@ -557,6 +366,7 @@
             padding: 15px;
             background: white;
             outline: none;
+            user-select: text;
         }
 
         /* Autocomplete Mention Box */
@@ -594,28 +404,6 @@
 
         .data-table th { background: var(--secondary); font-family: var(--font-title); }
 
-        /* Form Group Styles */
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .form-group label {
-            font-family: var(--font-title);
-            font-size: 0.9rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
         /* Utility */
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
@@ -624,37 +412,14 @@
 <body>
 
     <!-- SIDEBAR NAVIGATION -->
-    <nav id="app-sidebar">
+    <nav idapp-sidebar id="app-sidebar">
         <div class="brand-header">
-            <h1>
-                <svg class="kawaii-berry-img" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Strawberry Body -->
-                    <path d="M32 60C32 60 54 46 54 28C54 16 43 12 32 16C21 12 10 16 10 28C10 46 32 60 32 60Z" fill="#FF5252"/>
-                    <!-- Leaf Top -->
-                    <path d="M32 16C28 8 18 8 18 8C18 8 22 16 28 17C22 18 14 24 14 24C14 24 24 22 30 19C28 25 32 30 32 30C32 30 36 25 34 19C40 22 50 24 50 24C50 24 42 18 36 17C42 16 46 8 46 8C46 8 36 8 32 16Z" fill="#4CAF50"/>
-                    <!-- Kawaii Eyes -->
-                    <circle cx="24" cy="30" r="3" fill="#212121"/>
-                    <circle cx="40" cy="30" r="3" fill="#212121"/>
-                    <circle cx="25" cy="29" r="1" fill="#FFFFFF"/>
-                    <circle cx="41" cy="29" r="1" fill="#FFFFFF"/>
-                    <!-- Kawaii Cheeks -->
-                    <ellipse cx="20" cy="34" rx="2.5" ry="1.5" fill="#FF8A80"/>
-                    <ellipse cx="44" cy="34" rx="2.5" ry="1.5" fill="#FF8A80"/>
-                    <!-- Kawaii Smile -->
-                    <path d="M29 34C29 34 32 37 35 34" stroke="#212121" stroke-width="2" stroke-linecap="round"/>
-                    <!-- Seeds -->
-                    <ellipse cx="22" cy="42" rx="1" ry="1.5" fill="#FFEB3B"/>
-                    <ellipse cx="42" cy="42" rx="1" ry="1.5" fill="#FFEB3B"/>
-                    <ellipse cx="32" cy="48" rx="1" ry="1.5" fill="#FFEB3B"/>
-                    <ellipse cx="32" cy="38" rx="1" ry="1.5" fill="#FFEB3B"/>
-                </svg>
-                Planberry
-            </h1>
+            <h1><i class="fa-solid fa-heart"></i> KawaiiPlan</h1>
             <span style="font-size:0.75rem; color:var(--text-muted);">BC K-5 Teacher Suite</span>
         </div>
         <div class="nav-menu">
             <button class="nav-btn active" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</button>
-            <button class="nav-btn" onclick="switchView('timetable')"><i class="fa-solid fa-clock"></i> Timetable</button>
+            <button class="nav-btn" onclick="switchView('timetable')"><i class="fa-solid fa-clock"></i> Timetable Setup</button>
             <button class="nav-btn" onclick="switchView('calendar')"><i class="fa-solid fa-calendar-days"></i> Year Calendar</button>
             <button class="nav-btn" onclick="switchView('weekly')"><i class="fa-solid fa-calendar-week"></i> Weekly Planner</button>
             <button class="nav-btn" onclick="switchView('daily')"><i class="fa-solid fa-calendar-day"></i> Daily Planner</button>
@@ -673,14 +438,14 @@
         <!-- DASHBOARD VIEW -->
         <section id="view-dashboard" class="view-panel active">
             <div class="flex-between">
-                <h2>Welcome Back, Zoe! 🌸</h2>
+                <h2>Welcome Back, Teacher! 🌸</h2>
                 <div id="current-date-badge" class="pill-tag"></div>
             </div>
 
             <div class="dashboard-grid">
                 <!-- Today's Schedule Card -->
                 <div class="card dash-overview">
-                    <h3><i class="fa-solid fa-calendar-day"></i> Today's Overview</h3>
+                    <h3><i class="fa-solid fa-sun"></i> Today's Overview</h3>
                     <div id="dash-schedule-list" style="margin-top: 15px;">
                         <p style="color:var(--text-muted);">No schedule configured yet. Setup your timetable!</p>
                     </div>
@@ -688,137 +453,45 @@
 
                 <!-- Sticky Notes Card -->
                 <div class="card dash-notes" style="background:#FFFDE7;">
-                    <h3><i class="fa-solid fa-note-sticky"></i></h3>
+                    <h3><i class="fa-solid fa-note-sticky"></i> Quick Sticky Note</h3>
                     <div id="sticky-note-editor" class="rich-editor" contenteditable="true" style="min-height: 120px; background: transparent; border: none;" placeholder="Jot down quick reminders..."></div>
                 </div>
 
                 <!-- Calendar View -->
                 <div class="card dash-calendar">
-                    <h3><i class="fa-solid fa-calendar"></i> Upcoming Dates</h3>
+                    <h3><i class="fa-solid fa-calendar"></i> Mini Calendar</h3>
                     <div id="mini-calendar-container" style="margin-top: 10px;"></div>
                 </div>
 
-                <!-- Birthdays -->
+                <!-- Alerts & Birthdays -->
                 <div class="card dash-alerts">
-                    <h3><i class="fa-solid fa-cake-candles"></i> Birthdays</h3>
+                    <h3><i class="fa-solid fa-cake-candles"></i> Birthdays & Alerts</h3>
                     <ul id="alerts-list" style="margin-top:10px; list-style:none; line-height:2;">
                         <li>🎈 Zoe's Birthday - Oct 12</li>
+                        <li>⚠️ Math Accommodation: Alex (Extra Time)</li>
                     </ul>
                 </div>
-
-                <!-- Live 12-Hour AM/PM Clock -->
-                <div class="card dash-clock">
-                    <div id="dashboard-clock" style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 700; color: var(--primary-dark);"></div>
-                </div>
-
-                <!-- Auto-updating Month Calendar Grid -->
-                <div class="card dash-month-calendar">
-                    <div id="dash-month-calendar-header" style="font-family: var(--font-title); font-size: 1.1rem; color: var(--primary-dark); font-weight: bold; margin-bottom: 8px;"></div>
-                    <div id="dash-month-calendar-grid" class="dash-month-grid"></div>
-                </div>
             </div>
         </section>
 
-        <!-- TIMETABLE VIEW -->
+        <!-- TIMETABLE SETUP VIEW -->
         <section id="view-timetable" class="view-panel">
             <div class="flex-between">
-                <h2>Timetable</h2>
-                <button class="btn" onclick="openAddClassModal()"><i class="fa-solid fa-plus"></i> Add A Class</button>
+                <h2>Timetable Configuration</h2>
+                <button class="btn" onclick="addTimetableBlock()"><i class="fa-solid fa-plus"></i> Add Block</button>
             </div>
-            <div class="timetable-container">
-                <!-- Far Left Times Column -->
-                <div class="timetable-times-col">
-                    <div class="timetable-time-header">Time</div>
-                    <div class="timetable-time-slot-label">8:00 AM</div>
-                    <div class="timetable-time-slot-label">8:30 AM</div>
-                    <div class="timetable-time-slot-label">9:00 AM</div>
-                    <div class="timetable-time-slot-label">9:30 AM</div>
-                    <div class="timetable-time-slot-label">10:00 AM</div>
-                    <div class="timetable-time-slot-label">10:30 AM</div>
-                    <div class="timetable-time-slot-label">11:00 AM</div>
-                    <div class="timetable-time-slot-label">11:30 AM</div>
-                    <div class="timetable-time-slot-label">12:00 PM</div>
-                    <div class="timetable-time-slot-label">12:30 PM</div>
-                    <div class="timetable-time-slot-label">1:00 PM</div>
-                    <div class="timetable-time-slot-label">1:30 PM</div>
-                    <div class="timetable-time-slot-label">2:00 PM</div>
-                    <div class="timetable-time-slot-label">2:30 PM</div>
-                    <div class="timetable-time-slot-label">3:00 PM</div>
-                    <div class="timetable-time-slot-label">3:30 PM</div>
-                    <div class="timetable-time-slot-label">4:00 PM</div>
-                    <div class="timetable-time-slot-label">4:30 PM</div>
-                    <div class="timetable-time-slot-label">5:00 PM</div>
-                    <div class="timetable-time-slot-label">5:30 PM</div>
-                    <div class="timetable-time-slot-label">6:00 PM</div>
-                    <div class="timetable-time-slot-label">6:30 PM</div>
-                </div>
-                <!-- Monday to Friday Schedule Columns -->
-                <div class="timetable-days-wrapper">
-                    <div class="timetable-day-col">
-                        <div class="timetable-day-header">Monday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Mon" data-day="Mon"></div>
-                    </div>
-                    <div class="timetable-day-col">
-                        <div class="timetable-day-header">Tuesday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Tue" data-day="Tue"></div>
-                    </div>
-                    <div class="timetable-day-col">
-                        <div class="timetable-day-header">Wednesday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Wed" data-day="Wed"></div>
-                    </div>
-                    <div class="timetable-day-col">
-                        <div class="timetable-day-header">Thursday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Thu" data-day="Thu"></div>
-                    </div>
-                    <div class="timetable-day-col">
-                        <div class="timetable-day-header">Friday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Fri" data-day="Fri"></div>
-                    </div>
+            <div class="card">
+                <div class="timetable-grid" id="timetable-editor-grid">
+                    <div></div>
+                    <div class="day-header">Monday</div>
+                    <div class="day-header">Tuesday</div>
+                    <div class="day-header">Wednesday</div>
+                    <div class="day-header">Thursday</div>
+                    <div class="day-header">Friday</div>
+                    <!-- Time slots populated via JS -->
                 </div>
             </div>
         </section>
-
-        <!-- ADD CLASS / BLOCK MODAL FOR TIMETABLE -->
-        <div id="add-class-modal" class="modal-overlay">
-            <div class="modal-card">
-                <h3>Add Timetable Block</h3>
-                <form id="add-class-form" style="margin-top: 15px;" onsubmit="handleSaveClassBlock(event)">
-                    <div class="form-group">
-                        <label for="class-type-select">Type</label>
-                        <select id="class-type-select" onchange="handleTypeChange(this.value)">
-                            <option value="Class">Class</option>
-                            <option value="Prep">Prep</option>
-                            <option value="Recess">Recess</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Duty">Duty</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="class-title-input">Title / Name</label>
-                        <input type="text" id="class-title-input" required placeholder="e.g. Math, Prep, Recess">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="class-duration-input">Duration</label>
-                            <input type="number" id="class-duration-input" min="1" required placeholder="Enter minutes (e.g. 30)">
-                        </div>
-                    </div>
-                    <div class="flex-between" style="margin-top: 20px;">
-                        <button type="button" class="btn btn-secondary" onclick="closeAddClassModal()">Cancel</button>
-                        <button type="submit" class="btn">Save Block</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <script>
-            function handleTypeChange(val) {
-                const titleInput = document.getElementById('class-title-input');
-                if (val === 'Prep' || val === 'Recess' || val === 'Lunch' || val === 'Duty') {
-                    titleInput.value = val;
-                }
-            }
-        </script>
 
         <!-- YEAR CALENDAR VIEW -->
         <section id="view-calendar" class="view-panel">
@@ -913,3 +586,456 @@
 
         <!-- SMALL GROUPS -->
         <section id="view-groups" class="view-panel">
+            <h2>Small Group Planning</h2>
+            <div style="display:flex; gap:15px; margin-top:15px;">
+                <div class="card" style="flex:1;">
+                    <h3>Group A (Guided Reading)</h3>
+                    <div style="min-height: 100px; border: 1px dashed var(--border-color); border-radius:12px; margin-top:10px; padding:10px;">
+                        <span class="pill-tag">Zoe</span> <span class="pill-tag">Alex</span>
+                    </div>
+                </div>
+                <div class="card" style="flex:1;">
+                    <h3>Group B (Math Support)</h3>
+                    <div style="min-height: 100px; border: 1px dashed var(--border-color); border-radius:12px; margin-top:10px; padding:10px;">
+                        <span class="pill-tag">Sam</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTES BOARD -->
+        <section id="view-notes" class="view-panel">
+            <h2>Notion-Style Notes Board</h2>
+            <div class="card">
+                <div id="main-notes-editor" class="rich-editor" contenteditable="true" onkeyup="handleMentionSearch(event)"></div>
+            </div>
+        </section>
+
+        <!-- PASSWORD VAULT VIEW -->
+        <section id="view-vault" class="view-panel">
+            <h2>Protected Password Vault 🔒</h2>
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Platform/Site</th>
+                            <th>URL</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BC Education Portal</td>
+                            <td>https://myedbc.gov.bc.ca</td>
+                            <td>teacher@sd23.bc.ca</td>
+                            <td>•••••••• <i class="fa-solid fa-eye" style="cursor:pointer;" onclick="alert('Password: SuperSecret123')"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SETTINGS VIEW -->
+        <section id="view-settings" class="view-panel">
+            <h2>Planner Settings & Customization</h2>
+            <div class="card" style="display:flex; flex-direction:column; gap:15px;">
+                <h3>Themes</h3>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" style="background:#FFB6C1;" onclick="setTheme('strawberry')">Strawberry Milk</button>
+                    <button class="btn" style="background:#C1E1C1;" onclick="setTheme('matcha')">Matcha Latte</button>
+                    <button class="btn" style="background:#E6E6FA;" onclick="setTheme('lavender')">Lavender Dreams</button>
+                    <button class="btn" style="background:#FFFACD; color:#000;" onclick="setTheme('butter')">Butter Yellow</button>
+                </div>
+                
+                <h3>Data Backup & Restore</h3>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" onclick="exportData()"><i class="fa-solid fa-download"></i> Export JSON Backup</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"><i class="fa-solid fa-upload"></i> Restore Data</button>
+                    <input type="file" id="import-file" style="display:none;" onchange="importData(event)">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- STICKER PALETTE -->
+    <div id="sticker-palette">
+        <span class="sticker-item" onclick="spawnSticker('🌸')">🌸</span>
+        <span class="sticker-item" onclick="spawnSticker('🐱')">🐱</span>
+        <span class="sticker-item" onclick="spawnSticker('⭐')">⭐</span>
+        <span class="sticker-item" onclick="spawnSticker('🎀')">🎀</span>
+        <span class="sticker-item" onclick="spawnSticker('🍓')">🍓</span>
+    </div>
+
+    <!-- STANDARDS MODAL -->
+    <div id="standards-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="flex-between">
+                <h3>BC K-5 Curriculum Standards</h3>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('standards-modal')"></i>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                <select id="std-grade" onchange="loadCurriculumOptions()">
+                    <option value="K">Grade K</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3" selected>Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                </select>
+                <select id="std-subject" onchange="loadCurriculumOptions()">
+                    <option value="MATH">Mathematics</option>
+                    <option value="ELA">Language Arts</option>
+                    <option value="SCI">Science</option>
+                </select>
+                <div id="standards-checklist" style="max-height: 200px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <h4>First Peoples Principles of Learning (FPPL)</h4>
+                <div style="max-height: 120px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
+                    <label><input type="checkbox" value="FPPL-1"> Learning ultimately supports the well-being of the self, family, community...</label><br>
+                    <label><input type="checkbox" value="FPPL-2"> Learning is holistic, reflexive, reflective, experiential, and relational...</label><br>
+                </div>
+
+                <button class="btn" onclick="attachSelectedStandards()">Attach Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN SECURITY MODAL -->
+    <div id="pin-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width:350px; text-align:center;">
+            <h3>Enter Security PIN</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Default PIN is 4125</p>
+            <input type="password" id="pin-input" maxlength="4" style="text-align:center; font-size:1.5rem; width:100px; margin-bottom:15px;">
+            <div>
+                <button class="btn" onclick="verifyPin()">Submit</button>
+                <button class="btn btn-secondary" onclick="closeModal('pin-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- @MENTION AUTOCOMPLETE OVERLAY -->
+    <div id="mention-dropdown"></div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // --- GLOBAL APP STATE & PERSISTENCE ---
+        let appState = {
+            pin: "4125",
+            theme: "strawberry",
+            currentYear: 2026,
+            students: [
+                { id: 1, name: "Zoe Smith", grade: 85, scale: "P", iep: "Visual Schedule" },
+                { id: 2, name: "Alex Jones", grade: 62, scale: "D", iep: "Extra Time" }
+            ],
+            anecdotals: {},
+            selectedStandards: []
+        };
+
+        const BC_CURRICULUM = {
+            "3": {
+                "MATH": ["Demonstrate fluency with addition facts to 20", "Understand fraction concepts as part of a whole"],
+                "ELA": ["Use foundational reading strategies to comprehend text", "Create stories with clear structure"]
+            }
+        };
+
+        let targetViewAfterPin = "";
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            initDateDisplay();
+            renderMiniCalendar();
+            renderYearCalendar(appState.currentYear);
+            renderStudentTable();
+            initGrowthChart();
+            setupAutosave();
+        });
+
+        function saveState() {
+            localStorage.setItem('kawaii_planner_data', JSON.stringify(appState));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('kawaii_planner_data');
+            if(saved) {
+                appState = Object.assign(appState, JSON.parse(saved));
+            }
+            setTheme(appState.theme);
+        }
+
+        function setupAutosave() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                el.addEventListener('input', () => saveState());
+            });
+        }
+
+        // --- UI & NAVIGATION ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            const target = document.getElementById(`view-${viewId}`);
+            if(target) target.classList.add('active');
+            
+            saveState();
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            appState.theme = themeName;
+            saveState();
+        }
+
+        function initDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('current-date-badge').innerText = new Date().toLocaleDateString('en-US', options);
+        }
+
+        // --- SECURITY PIN HANDLER ---
+        function promptPinForView(viewId) {
+            targetViewAfterPin = viewId;
+            document.getElementById('pin-input').value = "";
+            document.getElementById('pin-modal').style.display = 'flex';
+        }
+
+        function verifyPin() {
+            const entered = document.getElementById('pin-input').value;
+            if(entered === appState.pin) {
+                closeModal('pin-modal');
+                switchView(targetViewAfterPin);
+            } else {
+                alert("Incorrect PIN! Default is 4125");
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // --- CALENDAR & TIMETABLE SYSTEM ---
+        function renderMiniCalendar() {
+            const container = document.getElementById('mini-calendar-container');
+            container.innerHTML = "<p style='font-size:0.85rem; color:var(--text-muted);'>Active Week: Oct 12 - Oct 16, 2026</p>";
+        }
+
+        function renderYearCalendar(year) {
+            document.getElementById('calendar-year-display').innerText = year;
+            const grid = document.getElementById('year-grid');
+            grid.innerHTML = '';
+            
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            months.forEach((m, idx) => {
+                const card = document.createElement('div');
+                card.style.cssText = "border:1px solid var(--border-color); padding:10px; border-radius:12px; text-align:center; cursor:pointer;";
+                card.innerHTML = `<strong>${m}</strong><br><span style="font-size:0.75rem;">Interactive View</span>`;
+                card.onclick = () => { switchView('daily'); document.getElementById('daily-date-title').innerText = `${m} Daily Planning`; };
+                grid.appendChild(card);
+            });
+        }
+
+        function changeYear(delta) {
+            appState.currentYear += delta;
+            renderYearCalendar(appState.currentYear);
+        }
+
+        // --- STANDARDS MODAL & BC CURRICULUM ---
+        function openStandardsModal() {
+            loadCurriculumOptions();
+            document.getElementById('standards-modal').style.display = 'flex';
+        }
+
+        function loadCurriculumOptions() {
+            const g = document.getElementById('std-grade').value;
+            const s = document.getElementById('std-subject').value;
+            const container = document.getElementById('standards-checklist');
+            container.innerHTML = '';
+
+            const list = (BC_CURRICULUM[g] && BC_CURRICULUM[g][s]) ? BC_CURRICULUM[g][s] : ["Standard outcome placeholder standard A", "Standard outcome placeholder standard B"];
+            list.forEach((item, idx) => {
+                container.innerHTML += `<label><input type="checkbox" value="BC-${s}-${g}-${idx}"> ${item}</label><br>`;
+            });
+        }
+
+        function attachSelectedStandards() {
+            const container = document.getElementById('connected-standards-badges');
+            container.innerHTML = '';
+            
+            const checked = document.querySelectorAll('#standards-modal input[type="checkbox"]:checked');
+            checked.forEach(cb => {
+                container.innerHTML += `<span class="pill-tag">${cb.value}</span>`;
+            });
+            closeModal('standards-modal');
+        }
+
+        // --- RICH TEXT & TEMPLATES ---
+        function formatDoc(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+        }
+
+        function applyTemplate(type) {
+            const editor = document.getElementById('daily-editor');
+            if(type === '5e') {
+                editor.innerHTML += `<h4>5E Model Framework</h4><ul><li><b>Engage:</b> Hook students.</li><li><b>Explore:</b> Hands-on activity.</li><li><b>Explain:</b> Direct teaching.</li><li><b>Elaborate:</b> Extend learning.</li><li><b>Evaluate:</b> Assess comprehension.</li></ul>`;
+            } else if(type === 'workshop') {
+                editor.innerHTML += `<h4>Workshop Method Framework</h4><ul><li><b>Mini-Lesson (10 mins):</b> Direct instruction.</li><li><b>Independent Practice:</b> Guided work time.</li><li><b>Sharing/Reflection:</b> Group debrief.</li></ul>`;
+            }
+        }
+
+        // --- @STUDENT SMART ANECDOTAL ENGINE ---
+        function handleMentionSearch(e) {
+            const sel = window.getSelection();
+            if(!sel.rangeCount) return;
+            const text = sel.anchorNode.textContent;
+            
+            if(text.includes('@')) {
+                const dropdown = document.getElementById('mention-dropdown');
+                dropdown.style.display = 'block';
+                dropdown.style.top = (e.clientY + 15) + 'px';
+                dropdown.style.left = e.clientX + 'px';
+                
+                dropdown.innerHTML = '';
+                appState.students.forEach(st => {
+                    const item = document.createElement('div');
+                    item.className = 'mention-item';
+                    item.innerText = `@${st.name}`;
+                    item.onclick = () => {
+                        document.execCommand('insertText', false, st.name + ' - ');
+                        dropdown.style.display = 'none';
+                    };
+                    dropdown.appendChild(item);
+                });
+            } else {
+                document.getElementById('mention-dropdown').style.display = 'none';
+            }
+        }
+
+        // --- STUDENT HUB & GRADEBOOK ---
+        function renderStudentTable() {
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+            
+            appState.students.forEach(st => {
+                let badgeColor = st.grade >= 80 ? '#C1E1C1' : st.grade >= 60 ? '#FFFACD' : '#FFD1DC';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${st.name}</strong></td>
+                        <td><input type="number" value="${st.grade}" style="width:60px;" onchange="updateStudentGrade(${st.id}, this.value)">%</td>
+                        <td><span class="pill-tag" style="background:${badgeColor}">${st.scale}</span></td>
+                        <td><input type="text" value="${st.iep}" onchange="updateStudentIEP(${st.id}, this.value)"></td>
+                        <td><button class="btn btn-secondary" style="font-size:0.75rem;" onclick="alert('Viewing anecdotal entries for ${st.name}')">View Logs</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateStudentGrade(id, val) {
+            const st = appState.students.find(s => s.id === id);
+            if(st) {
+                st.grade = parseInt(val) || 0;
+                st.scale = st.grade >= 80 ? 'EX' : st.grade >= 70 ? 'P' : st.grade >= 50 ? 'D' : 'EM';
+                renderStudentTable();
+                saveState();
+            }
+        }
+
+        function updateStudentIEP(id, val) {
+            const st = appState.students.find(s => s.id === id);
+            if(st) { st.iep = val; saveState(); }
+        }
+
+        function addStudent() {
+            const name = prompt("Enter Student Name:");
+            if(name) {
+                appState.students.push({ id: Date.now(), name: name, grade: 75, scale: 'P', iep: 'None' });
+                renderStudentTable();
+                saveState();
+            }
+        }
+
+        function initGrowthChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Term 1', 'Term 2', 'Term 3'],
+                    datasets: [{
+                        label: 'Class Proficient Average (%)',
+                        data: [68, 74, 82],
+                        borderColor: '#FF69B4',
+                        backgroundColor: 'rgba(255, 105, 180, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- STICKERS ENGINE ---
+        function spawnSticker(emoji) {
+            const sticker = document.createElement('div');
+            sticker.className = 'placed-sticker';
+            sticker.innerText = emoji;
+            sticker.style.left = '300px';
+            sticker.style.top = '200px';
+            
+            // Drag logic
+            let isDragging = false;
+            sticker.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                let shiftX = e.clientX - sticker.getBoundingClientRect().left;
+                let shiftY = e.clientY - sticker.getBoundingClientRect().top;
+                
+                function moveAt(pageX, pageY) {
+                    sticker.style.left = pageX - shiftX + 'px';
+                    sticker.style.top = pageY - shiftY + 'px';
+                }
+                
+                function onMouseMove(event) {
+                    if (isDragging) moveAt(event.pageX, event.pageY);
+                }
+                
+                document.addEventListener('mousemove', onMouseMove);
+                
+                sticker.onmouseup = function() {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    sticker.onmouseup = null;
+                };
+            });
+
+            document.body.appendChild(sticker);
+        }
+
+        // --- PDF EXPORT & BACKUP ---
+        function exportPDF() {
+            const element = document.getElementById('printable-weekly-area');
+            html2pdf().from(element).save('Weekly_Planner.pdf');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "kawaii_planner_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                appState = JSON.parse(e.target.result);
+                saveState();
+                location.reload();
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
