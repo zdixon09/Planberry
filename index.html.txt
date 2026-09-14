@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="strawberry">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawaii BC K-5 Teacher Planner</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #FFF0F5;
+            --bg-card: #FFFFFF;
+            --primary: #FFB6C1;
+            --primary-dark: #FF69B4;
+            --secondary: #FFD1DC;
+            --accent: #FF8DA1;
+            --text-main: #5A4A42;
+            --text-muted: #8C7A6B;
+            --border-color: #FFE4E1;
+            --shadow-color: rgba(255, 182, 193, 0.3);
+            --font-title: 'Fredoka', cursive, sans-serif;
+            --font-body: 'Nunito', sans-serif;
+            --radius: 18px;
+        }
+
+        [data-theme="matcha"] {
+            --bg-main: #F4F9F4;
+            --bg-card: #FFFFFF;
+            --primary: #C1E1C1;
+            --primary-dark: #77DD77;
+            --secondary: #E8F5E9;
+            --accent: #8FBC8F;
+            --text-main: #2E4033;
+            --text-muted: #627265;
+            --border-color: #D3E8D3;
+            --shadow-color: rgba(193, 225, 193, 0.4);
+        }
+
+        [data-theme="lavender"] {
+            --bg-main: #F3F0F9;
+            --bg-card: #FFFFFF;
+            --primary: #E6E6FA;
+            --primary-dark: #B39DDB;
+            --secondary: #F0E6FF;
+            --accent: #9575CD;
+            --text-main: #3C2F4D;
+            --text-muted: #73628A;
+            --border-color: #E2D7F3;
+            --shadow-color: rgba(230, 230, 250, 0.5);
+        }
+
+        [data-theme="butter"] {
+            --bg-main: #FFFDF0;
+            --bg-card: #FFFFFF;
+            --primary: #FFFACD;
+            --primary-dark: #FCE883;
+            --secondary: #FFFEE0;
+            --accent: #F4C430;
+            --text-main: #4A432A;
+            --text-muted: #807654;
+            --border-color: #FAF0A6;
+            --shadow-color: rgba(255, 250, 205, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* App Container Layout */
+        #app-sidebar {
+            width: 250px;
+            background: var(--bg-card);
+            border-right: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 10px;
+            box-shadow: 4px 0 15px var(--shadow-color);
+            z-index: 10;
+        }
+
+        .brand-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .brand-header h1 {
+            font-family: var(--font-title);
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-family: var(--font-title);
+            font-size: 0.95rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--secondary);
+            color: var(--primary-dark);
+            transform: translateX(4px);
+        }
+
+        .nav-btn i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding: 25px;
+        }
+
+        .view-panel {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .view-panel.active {
+            display: flex;
+        }
+
+        /* General UI Elements */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+
+        h2, h3, h4 {
+            font-family: var(--font-title);
+            color: var(--text-main);
+        }
+
+        .pill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--secondary);
+            color: var(--primary-dark);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--text-main);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            font-family: var(--font-title);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        input, select, textarea {
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            font-family: var(--font-body);
+            outline: none;
+            background: #FAFAFA;
+            color: var(--text-main);
+            user-select: text;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-dark);
+            background: #FFF;
+        }
+
+        /* Stickers Layer */
+        #sticker-palette {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border-radius: 30px;
+            padding: 10px 18px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            border: 2px solid var(--border-color);
+        }
+
+        .sticker-item {
+            font-size: 1.8rem;
+            cursor: grab;
+            transition: transform 0.2s;
+        }
+
+        .sticker-item:hover {
+            transform: scale(1.3) rotate(-10deg);
+        }
+
+        .placed-sticker {
+            position: absolute;
+            font-size: 2.5rem;
+            cursor: move;
+            z-index: 500;
+            user-select: none;
+        }
+
+        /* Dashboard View Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .dash-overview { grid-column: span 8; }
+        .dash-notes { grid-column: span 4; }
+        .dash-calendar { grid-column: span 6; }
+        .dash-alerts { grid-column: span 6; }
+
+        /* Timetable & Calendar */
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(5, 1fr);
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .time-col { font-weight: bold; text-align: center; color: var(--text-muted); }
+        .day-header { text-align: center; font-family: var(--font-title); padding: 10px; background: var(--secondary); border-radius: 12px; }
+
+        .time-slot {
+            min-height: 80px;
+            background: #FAFAFA;
+            border: 1.5px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 5px;
+            position: relative;
+        }
+
+        .schedule-block {
+            background: var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Rich Text Editor Tools */
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            background: var(--secondary);
+            padding: 8px;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .editor-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .rich-editor {
+            min-height: 200px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 15px;
+            background: white;
+            outline: none;
+            user-select: text;
+        }
+
+        /* Autocomplete Mention Box */
+        #mention-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 3000;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .mention-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .mention-item:hover { background: var(--secondary); }
+
+        /* Tables & Gradebook */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .data-table th { background: var(--secondary); font-family: var(--font-title); }
+
+        /* Utility */
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <nav idapp-sidebar id="app-sidebar">
+        <div class="brand-header">
+            <h1><i class="fa-solid fa-heart"></i> KawaiiPlan</h1>
+            <span style="font-size:0.75rem; color:var(--text-muted);">BC K-5 Teacher Suite</span>
+        </div>
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</button>
+            <button class="nav-btn" onclick="switchView('timetable')"><i class="fa-solid fa-clock"></i> Timetable Setup</button>
+            <button class="nav-btn" onclick="switchView('calendar')"><i class="fa-solid fa-calendar-days"></i> Year Calendar</button>
+            <button class="nav-btn" onclick="switchView('weekly')"><i class="fa-solid fa-calendar-week"></i> Weekly Planner</button>
+            <button class="nav-btn" onclick="switchView('daily')"><i class="fa-solid fa-calendar-day"></i> Daily Planner</button>
+            <button class="nav-btn" onclick="switchView('lessons')"><i class="fa-solid fa-book-open"></i> Lessons & Units</button>
+            <button class="nav-btn" onclick="switchView('students')"><i class="fa-solid fa-user-graduate"></i> Student Hub</button>
+            <button class="nav-btn" onclick="switchView('groups')"><i class="fa-solid fa-users-rectangle"></i> Small Groups</button>
+            <button class="nav-btn" onclick="switchView('notes')"><i class="fa-solid fa-note-sticky"></i> Notes & Board</button>
+            <button class="nav-btn" onclick="promptPinForView('vault')"><i class="fa-solid fa-key"></i> Password Vault</button>
+            <button class="nav-btn" onclick="promptPinForView('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="main-content">
+        
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-panel active">
+            <div class="flex-between">
+                <h2>Welcome Back, Teacher! 🌸</h2>
+                <div id="current-date-badge" class="pill-tag"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Today's Schedule Card -->
+                <div class="card dash-overview">
+                    <h3><i class="fa-solid fa-sun"></i> Today's Overview</h3>
+                    <div id="dash-schedule-list" style="margin-top: 15px;">
+                        <p style="color:var(--text-muted);">No schedule configured yet. Setup your timetable!</p>
+                    </div>
+                </div>
+
+                <!-- Sticky Notes Card -->
+                <div class="card dash-notes" style="background:#FFFDE7;">
+                    <h3><i class="fa-solid fa-note-sticky"></i> Quick Sticky Note</h3>
+                    <div id="sticky-note-editor" class="rich-editor" contenteditable="true" style="min-height: 120px; background: transparent; border: none;" placeholder="Jot down quick reminders..."></div>
+                </div>
+
+                <!-- Calendar View -->
+                <div class="card dash-calendar">
+                    <h3><i class="fa-solid fa-calendar"></i> Mini Calendar</h3>
+                    <div id="mini-calendar-container" style="margin-top: 10px;"></div>
+                </div>
+
+                <!-- Alerts & Birthdays -->
+                <div class="card dash-alerts">
+                    <h3><i class="fa-solid fa-cake-candles"></i> Birthdays & Alerts</h3>
+                    <ul id="alerts-list" style="margin-top:10px; list-style:none; line-height:2;">
+                        <li>🎈 Zoe's Birthday - Oct 12</li>
+                        <li>⚠️ Math Accommodation: Alex (Extra Time)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIMETABLE SETUP VIEW -->
+        <section id="view-timetable" class="view-panel">
+            <div class="flex-between">
+                <h2>Timetable Configuration</h2>
+                <button class="btn" onclick="addTimetableBlock()"><i class="fa-solid fa-plus"></i> Add Block</button>
+            </div>
+            <div class="card">
+                <div class="timetable-grid" id="timetable-editor-grid">
+                    <div></div>
+                    <div class="day-header">Monday</div>
+                    <div class="day-header">Tuesday</div>
+                    <div class="day-header">Wednesday</div>
+                    <div class="day-header">Thursday</div>
+                    <div class="day-header">Friday</div>
+                    <!-- Time slots populated via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- YEAR CALENDAR VIEW -->
+        <section id="view-calendar" class="view-panel">
+            <div class="flex-between">
+                <h2>Multi-Year Calendar Navigation</h2>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button class="btn btn-secondary" onclick="changeYear(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h3 id="calendar-year-display">2026</h3>
+                    <button class="btn btn-secondary" onclick="changeYear(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div id="year-grid" class="card" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px;"></div>
+        </section>
+
+        <!-- WEEKLY PLANNER VIEW -->
+        <section id="view-weekly" class="view-panel">
+            <div class="flex-between">
+                <h2>Weekly Overview Plan</h2>
+                <button class="btn" onclick="exportPDF()"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+            </div>
+            <div class="card" id="printable-weekly-area">
+                <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px;">
+                    <div class="day-header">Mon</div>
+                    <div class="day-header">Tue</div>
+                    <div class="day-header">Wed</div>
+                    <div class="day-header">Thu</div>
+                    <div class="day-header">Fri</div>
+                </div>
+                <div id="weekly-plan-blocks" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; margin-top:10px; min-height:400px;">
+                    <!-- Blocks populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DAILY PLANNER VIEW -->
+        <section id="view-daily" class="view-panel">
+            <div class="flex-between">
+                <h2 id="daily-date-title">Daily Lesson Plan</h2>
+                <button class="btn" onclick="openStandardsModal()"><i class="fa-solid fa-bookmark"></i> Connect Standards</button>
+            </div>
+            <div class="card">
+                <div class="editor-toolbar">
+                    <button class="editor-btn" onclick="formatDoc('bold')"><b>B</b></button>
+                    <button class="editor-btn" onclick="formatDoc('italic')"><i>I</i></button>
+                    <button class="editor-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                    <select onchange="applyTemplate(this.value)" style="padding: 2px 5px;">
+                        <option value="">-- Apply Template --</option>
+                        <option value="5e">5E Model</option>
+                        <option value="workshop">Workshop Method</option>
+                    </select>
+                </div>
+                <div id="daily-editor" class="rich-editor" contenteditable="true" onkeyup="handleMentionSearch(event)"></div>
+                <div id="connected-standards-badges" style="margin-top: 15px; display:flex; gap:5px; flex-wrap:wrap;"></div>
+            </div>
+        </section>
+
+        <!-- LESSONS & UNITS HUB -->
+        <section id="view-lessons" class="view-panel">
+            <h2>Lessons & Units Repository</h2>
+            <div class="card">
+                <p>Organize, save, and structure cross-curricular units here.</p>
+            </div>
+        </section>
+
+        <!-- STUDENT HUB -->
+        <section id="view-students" class="view-panel">
+            <div class="flex-between">
+                <h2>Student Roster & Gradebook</h2>
+                <button class="btn" onclick="addStudent()"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+            </div>
+            <div class="card">
+                <table class="data-table" id="student-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Grade Scale Input</th>
+                            <th>BC 4-Point Standard</th>
+                            <th>IEP / Accommodations</th>
+                            <th>Anecdotal History</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body">
+                        <!-- Student Rows -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="card" style="margin-top: 20px;">
+                <h3>Growth Trajectory Analytics</h3>
+                <canvas id="growthChart" style="max-height: 250px;"></canvas>
+            </div>
+        </section>
+
+        <!-- SMALL GROUPS -->
+        <section id="view-groups" class="view-panel">
+            <h2>Small Group Planning</h2>
+            <div style="display:flex; gap:15px; margin-top:15px;">
+                <div class="card" style="flex:1;">
+                    <h3>Group A (Guided Reading)</h3>
+                    <div style="min-height: 100px; border: 1px dashed var(--border-color); border-radius:12px; margin-top:10px; padding:10px;">
+                        <span class="pill-tag">Zoe</span> <span class="pill-tag">Alex</span>
+                    </div>
+                </div>
+                <div class="card" style="flex:1;">
+                    <h3>Group B (Math Support)</h3>
+                    <div style="min-height: 100px; border: 1px dashed var(--border-color); border-radius:12px; margin-top:10px; padding:10px;">
+                        <span class="pill-tag">Sam</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTES BOARD -->
+        <section id="view-notes" class="view-panel">
+            <h2>Notion-Style Notes Board</h2>
+            <div class="card">
+                <div id="main-notes-editor" class="rich-editor" contenteditable="true" onkeyup="handleMentionSearch(event)"></div>
+            </div>
+        </section>
+
+        <!-- PASSWORD VAULT VIEW -->
+        <section id="view-vault" class="view-panel">
+            <h2>Protected Password Vault 🔒</h2>
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Platform/Site</th>
+                            <th>URL</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BC Education Portal</td>
+                            <td>https://myedbc.gov.bc.ca</td>
+                            <td>teacher@sd23.bc.ca</td>
+                            <td>•••••••• <i class="fa-solid fa-eye" style="cursor:pointer;" onclick="alert('Password: SuperSecret123')"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SETTINGS VIEW -->
+        <section id="view-settings" class="view-panel">
+            <h2>Planner Settings & Customization</h2>
+            <div class="card" style="display:flex; flex-direction:column; gap:15px;">
+                <h3>Themes</h3>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" style="background:#FFB6C1;" onclick="setTheme('strawberry')">Strawberry Milk</button>
+                    <button class="btn" style="background:#C1E1C1;" onclick="setTheme('matcha')">Matcha Latte</button>
+                    <button class="btn" style="background:#E6E6FA;" onclick="setTheme('lavender')">Lavender Dreams</button>
+                    <button class="btn" style="background:#FFFACD; color:#000;" onclick="setTheme('butter')">Butter Yellow</button>
+                </div>
+                
+                <h3>Data Backup & Restore</h3>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" onclick="exportData()"><i class="fa-solid fa-download"></i> Export JSON Backup</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"><i class="fa-solid fa-upload"></i> Restore Data</button>
+                    <input type="file" id="import-file" style="display:none;" onchange="importData(event)">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- STICKER PALETTE -->
+    <div id="sticker-palette">
+        <span class="sticker-item" onclick="spawnSticker('🌸')">🌸</span>
+        <span class="sticker-item" onclick="spawnSticker('🐱')">🐱</span>
+        <span class="sticker-item" onclick="spawnSticker('⭐')">⭐</span>
+        <span class="sticker-item" onclick="spawnSticker('🎀')">🎀</span>
+        <span class="sticker-item" onclick="spawnSticker('🍓')">🍓</span>
+    </div>
+
+    <!-- STANDARDS MODAL -->
+    <div id="standards-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="flex-between">
+                <h3>BC K-5 Curriculum Standards</h3>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('standards-modal')"></i>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                <select id="std-grade" onchange="loadCurriculumOptions()">
+                    <option value="K">Grade K</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3" selected>Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                </select>
+                <select id="std-subject" onchange="loadCurriculumOptions()">
+                    <option value="MATH">Mathematics</option>
+                    <option value="ELA">Language Arts</option>
+                    <option value="SCI">Science</option>
+                </select>
+                <div id="standards-checklist" style="max-height: 200px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <h4>First Peoples Principles of Learning (FPPL)</h4>
+                <div style="max-height: 120px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
+                    <label><input type="checkbox" value="FPPL-1"> Learning ultimately supports the well-being of the self, family, community...</label><br>
+                    <label><input type="checkbox" value="FPPL-2"> Learning is holistic, reflexive, reflective, experiential, and relational...</label><br>
+                </div>
+
+                <button class="btn" onclick="attachSelectedStandards()">Attach Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN SECURITY MODAL -->
+    <div id="pin-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width:350px; text-align:center;">
+            <h3>Enter Security PIN</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Default PIN is 4125</p>
+            <input type="password" id="pin-input" maxlength="4" style="text-align:center; font-size:1.5rem; width:100px; margin-bottom:15px;">
+            <div>
+                <button class="btn" onclick="verifyPin()">Submit</button>
+                <button class="btn btn-secondary" onclick="closeModal('pin-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- @MENTION AUTOCOMPLETE OVERLAY -->
+    <div id="mention-dropdown"></div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // --- GLOBAL APP STATE & PERSISTENCE ---
+        let appState = {
+            pin: "4125",
+            theme: "strawberry",
+            currentYear: 2026,
+            students: [
+                { id: 1, name: "Zoe Smith", grade: 85, scale: "P", iep: "Visual Schedule" },
+                { id: 2, name: "Alex Jones", grade: 62, scale: "D", iep: "Extra Time" }
+            ],
+            anecdotals: {},
+            selectedStandards: []
+        };
+
+        const BC_CURRICULUM = {
+            "3": {
+                "MATH": ["Demonstrate fluency with addition facts to 20", "Understand fraction concepts as part of a whole"],
+                "ELA": ["Use foundational reading strategies to comprehend text", "Create stories with clear structure"]
+            }
+        };
+
+        let targetViewAfterPin = "";
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            initDateDisplay();
+            renderMiniCalendar();
+            renderYearCalendar(appState.currentYear);
+            renderStudentTable();
+            initGrowthChart();
+            setupAutosave();
+        });
+
+        function saveState() {
+            localStorage.setItem('kawaii_planner_data', JSON.stringify(appState));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('kawaii_planner_data');
+            if(saved) {
+                appState = Object.assign(appState, JSON.parse(saved));
+            }
+            setTheme(appState.theme);
+        }
+
+        function setupAutosave() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                el.addEventListener('input', () => saveState());
+            });
+        }
+
+        // --- UI & NAVIGATION ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            const target = document.getElementById(`view-${viewId}`);
+            if(target) target.classList.add('active');
+            
+            saveState();
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            appState.theme = themeName;
+            saveState();
+        }
+
+        function initDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('current-date-badge').innerText = new Date().toLocaleDateString('en-US', options);
+        }
+
+        // --- SECURITY PIN HANDLER ---
+        function promptPinForView(viewId) {
+            targetViewAfterPin = viewId;
+            document.getElementById('pin-input').value = "";
+            document.getElementById('pin-modal').style.display = 'flex';
+        }
+
+        function verifyPin() {
+            const entered = document.getElementById('pin-input').value;
+            if(entered === appState.pin) {
+                closeModal('pin-modal');
+                switchView(targetViewAfterPin);
+            } else {
+                alert("Incorrect PIN! Default is 4125");
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // --- CALENDAR & TIMETABLE SYSTEM ---
+        function renderMiniCalendar() {
+            const container = document.getElementById('mini-calendar-container');
+            container.innerHTML = "<p style='font-size:0.85rem; color:var(--text-muted);'>Active Week: Oct 12 - Oct 16, 2026</p>";
+        }
+
+        function renderYearCalendar(year) {
+            document.getElementById('calendar-year-display').innerText = year;
+            const grid = document.getElementById('year-grid');
+            grid.innerHTML = '';
+            
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            months.forEach((m, idx) => {
+                const card = document.createElement('div');
+                card.style.cssText = "border:1px solid var(--border-color); padding:10px; border-radius:12px; text-align:center; cursor:pointer;";
+                card.innerHTML = `<strong>${m}</strong><br><span style="font-size:0.75rem;">Interactive View</span>`;
+                card.onclick = () => { switchView('daily'); document.getElementById('daily-date-title').innerText = `${m} Daily Planning`; };
+                grid.appendChild(card);
+            });
+        }
+
+        function changeYear(delta) {
+            appState.currentYear += delta;
+            renderYearCalendar(appState.currentYear);
+        }
+
+        // --- STANDARDS MODAL & BC CURRICULUM ---
+        function openStandardsModal() {
+            loadCurriculumOptions();
+            document.getElementById('standards-modal').style.display = 'flex';
+        }
+
+        function loadCurriculumOptions() {
+            const g = document.getElementById('std-grade').value;
+            const s = document.getElementById('std-subject').value;
+            const container = document.getElementById('standards-checklist');
+            container.innerHTML = '';
+
+            const list = (BC_CURRICULUM[g] && BC_CURRICULUM[g][s]) ? BC_CURRICULUM[g][s] : ["Standard outcome placeholder standard A", "Standard outcome placeholder standard B"];
+            list.forEach((item, idx) => {
+                container.innerHTML += `<label><input type="checkbox" value="BC-${s}-${g}-${idx}"> ${item}</label><br>`;
+            });
+        }
+
+        function attachSelectedStandards() {
+            const container = document.getElementById('connected-standards-badges');
+            container.innerHTML = '';
+            
+            const checked = document.querySelectorAll('#standards-modal input[type="checkbox"]:checked');
+            checked.forEach(cb => {
+                container.innerHTML += `<span class="pill-tag">${cb.value}</span>`;
+            });
+            closeModal('standards-modal');
+        }
+
+        // --- RICH TEXT & TEMPLATES ---
+        function formatDoc(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+        }
+
+        function applyTemplate(type) {
+            const editor = document.getElementById('daily-editor');
+            if(type === '5e') {
+                editor.innerHTML += `<h4>5E Model Framework</h4><ul><li><b>Engage:</b> Hook students.</li><li><b>Explore:</b> Hands-on activity.</li><li><b>Explain:</b> Direct teaching.</li><li><b>Elaborate:</b> Extend learning.</li><li><b>Evaluate:</b> Assess comprehension.</li></ul>`;
+            } else if(type === 'workshop') {
+                editor.innerHTML += `<h4>Workshop Method Framework</h4><ul><li><b>Mini-Lesson (10 mins):</b> Direct instruction.</li><li><b>Independent Practice:</b> Guided work time.</li><li><b>Sharing/Reflection:</b> Group debrief.</li></ul>`;
+            }
+        }
+
+        // --- @STUDENT SMART ANECDOTAL ENGINE ---
+        function handleMentionSearch(e) {
+            const sel = window.getSelection();
+            if(!sel.rangeCount) return;
+            const text = sel.anchorNode.textContent;
+            
+            if(text.includes('@')) {
+                const dropdown = document.getElementById('mention-dropdown');
+                dropdown.style.display = 'block';
+                dropdown.style.top = (e.clientY + 15) + 'px';
+                dropdown.style.left = e.clientX + 'px';
+                
+                dropdown.innerHTML = '';
+                appState.students.forEach(st => {
+                    const item = document.createElement('div');
+                    item.className = 'mention-item';
+                    item.innerText = `@${st.name}`;
+                    item.onclick = () => {
+                        document.execCommand('insertText', false, st.name + ' - ');
+                        dropdown.style.display = 'none';
+                    };
+                    dropdown.appendChild(item);
+                });
+            } else {
+                document.getElementById('mention-dropdown').style.display = 'none';
+            }
+        }
+
+        // --- STUDENT HUB & GRADEBOOK ---
+        function renderStudentTable() {
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+            
+            appState.students.forEach(st => {
+                let badgeColor = st.grade >= 80 ? '#C1E1C1' : st.grade >= 60 ? '#FFFACD' : '#FFD1DC';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${st.name}</strong></td>
+                        <td><input type="number" value="${st.grade}" style="width:60px;" onchange="updateStudentGrade(${st.id}, this.value)">%</td>
+                        <td><span class="pill-tag" style="background:${badgeColor}">${st.scale}</span></td>
+                        <td><input type="text" value="${st.iep}" onchange="updateStudentIEP(${st.id}, this.value)"></td>
+                        <td><button class="btn btn-secondary" style="font-size:0.75rem;" onclick="alert('Viewing anecdotal entries for ${st.name}')">View Logs</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateStudentGrade(id, val) {
+            const st = appState.students.find(s => s.id === id);
+            if(st) {
+                st.grade = parseInt(val) || 0;
+                st.scale = st.grade >= 80 ? 'EX' : st.grade >= 70 ? 'P' : st.grade >= 50 ? 'D' : 'EM';
+                renderStudentTable();
+                saveState();
+            }
+        }
+
+        function updateStudentIEP(id, val) {
+            const st = appState.students.find(s => s.id === id);
+            if(st) { st.iep = val; saveState(); }
+        }
+
+        function addStudent() {
+            const name = prompt("Enter Student Name:");
+            if(name) {
+                appState.students.push({ id: Date.now(), name: name, grade: 75, scale: 'P', iep: 'None' });
+                renderStudentTable();
+                saveState();
+            }
+        }
+
+        function initGrowthChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Term 1', 'Term 2', 'Term 3'],
+                    datasets: [{
+                        label: 'Class Proficient Average (%)',
+                        data: [68, 74, 82],
+                        borderColor: '#FF69B4',
+                        backgroundColor: 'rgba(255, 105, 180, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- STICKERS ENGINE ---
+        function spawnSticker(emoji) {
+            const sticker = document.createElement('div');
+            sticker.className = 'placed-sticker';
+            sticker.innerText = emoji;
+            sticker.style.left = '300px';
+            sticker.style.top = '200px';
+            
+            // Drag logic
+            let isDragging = false;
+            sticker.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                let shiftX = e.clientX - sticker.getBoundingClientRect().left;
+                let shiftY = e.clientY - sticker.getBoundingClientRect().top;
+                
+                function moveAt(pageX, pageY) {
+                    sticker.style.left = pageX - shiftX + 'px';
+                    sticker.style.top = pageY - shiftY + 'px';
+                }
+                
+                function onMouseMove(event) {
+                    if (isDragging) moveAt(event.pageX, event.pageY);
+                }
+                
+                document.addEventListener('mousemove', onMouseMove);
+                
+                sticker.onmouseup = function() {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    sticker.onmouseup = null;
+                };
+            });
+
+            document.body.appendChild(sticker);
+        }
+
+        // --- PDF EXPORT & BACKUP ---
+        function exportPDF() {
+            const element = document.getElementById('printable-weekly-area');
+            html2pdf().from(element).save('Weekly_Planner.pdf');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "kawaii_planner_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                appState = JSON.parse(e.target.result);
+                saveState();
+                location.reload();
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
