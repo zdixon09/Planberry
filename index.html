@@ -370,27 +370,44 @@
             background-image: linear-gradient(to bottom, transparent 39px, var(--border-color) 40px);
         }
 
+        .timetable-day-slots.drag-over {
+            background-color: rgba(255, 182, 193, 0.15);
+        }
+
+        /* 4-point move arrow cursor on block hover */
         .timetable-class-block {
             position: absolute;
             left: 4px;
             right: 4px;
             border-radius: 10px;
             padding: 6px 10px;
-            color: #FFFFFF;
             font-family: var(--font-title);
             box-shadow: 0 4px 8px rgba(0,0,0,0.12);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.15s ease;
-            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: move; /* Hover 4-point arrow cursor */
             z-index: 5;
+            user-select: none;
         }
 
+        /* Hovering effect */
         .timetable-class-block:hover {
             transform: scale(1.02);
             z-index: 10;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Class Block Specific Styling */
+        .timetable-class-block.type-class {
+            color: #FFFFFF;
+        }
+
+        /* Non-Class Types: White background fill + thick colored outer ring */
+        .timetable-class-block.type-ring {
+            background-color: #FFFFFF !important;
         }
 
         .timetable-block-title {
@@ -412,7 +429,7 @@
         .delete-block-btn {
             background: rgba(0,0,0,0.2);
             border: none;
-            color: white;
+            color: currentColor;
             width: 18px;
             height: 18px;
             border-radius: 50%;
@@ -425,6 +442,7 @@
 
         .delete-block-btn:hover {
             background: rgba(255,0,0,0.6);
+            color: white;
         }
 
         /* Interactive Dashboard Month Calendar Grid */
@@ -576,6 +594,28 @@
 
         .data-table th { background: var(--secondary); font-family: var(--font-title); }
 
+        /* Form Group Styles */
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
         /* Utility */
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
@@ -716,23 +756,23 @@
                 <div class="timetable-days-wrapper">
                     <div class="timetable-day-col">
                         <div class="timetable-day-header">Monday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Mon"></div>
+                        <div class="timetable-day-slots" id="timetable-day-Mon" data-day="Mon"></div>
                     </div>
                     <div class="timetable-day-col">
                         <div class="timetable-day-header">Tuesday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Tue"></div>
+                        <div class="timetable-day-slots" id="timetable-day-Tue" data-day="Tue"></div>
                     </div>
                     <div class="timetable-day-col">
                         <div class="timetable-day-header">Wednesday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Wed"></div>
+                        <div class="timetable-day-slots" id="timetable-day-Wed" data-day="Wed"></div>
                     </div>
                     <div class="timetable-day-col">
                         <div class="timetable-day-header">Thursday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Thu"></div>
+                        <div class="timetable-day-slots" id="timetable-day-Thu" data-day="Thu"></div>
                     </div>
                     <div class="timetable-day-col">
                         <div class="timetable-day-header">Friday</div>
-                        <div class="timetable-day-slots" id="timetable-day-Fri"></div>
+                        <div class="timetable-day-slots" id="timetable-day-Fri" data-day="Fri"></div>
                     </div>
                 </div>
             </div>
@@ -852,83 +892,50 @@
         <section id="view-notes" class="view-panel">
             <h2>Notion-Style Notes Board</h2>
             <div class="card">
-                <div id="main-notes-editor" class="rich-editor" contenteditable="true" onkeyup="handleMentionSearch(event)"></div>
+                <div id="main-notes-editor" class="rich-editor" contenteditable="true" onkeyup="handleMentionSearch(event)" placeholder="Type notes here..."></div>
             </div>
         </section>
 
-        <!-- PASSWORD VAULT VIEW -->
+        <!-- PASSWORD VAULT -->
         <section id="view-vault" class="view-panel">
-            <h2>Protected Password Vault 🔒</h2>
+            <h2>Password Vault</h2>
             <div class="card">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Platform/Site</th>
-                            <th>URL</th>
-                            <th>Username</th>
-                            <th>Password</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>BC Education Portal</td>
-                            <td>https://myedbc.gov.bc.ca</td>
-                            <td>teacher@sd23.bc.ca</td>
-                            <td>•••••••• <i class="fa-solid fa-eye" style="cursor:pointer;" onclick="alert('Password: SuperSecret123')"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p>Secure vault storage for classroom tools and platform accounts.</p>
             </div>
         </section>
 
-        <!-- SETTINGS VIEW -->
+        <!-- SETTINGS -->
         <section id="view-settings" class="view-panel">
-            <h2>Planner Settings & Customization</h2>
-            <div class="card" style="display:flex; flex-direction:column; gap:15px;">
-                <h3>Themes</h3>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn" style="background:#FFB6C1;" onclick="setTheme('strawberry')">Strawberry Milk</button>
-                    <button class="btn" style="background:#C1E1C1;" onclick="setTheme('matcha')">Matcha Latte</button>
-                    <button class="btn" style="background:#E6E6FA;" onclick="setTheme('lavender')">Lavender Dreams</button>
-                    <button class="btn" style="background:#FFFACD; color:#000;" onclick="setTheme('butter')">Butter Yellow</button>
-                </div>
-                
-                <h3>Data Backup & Restore</h3>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn" onclick="exportData()"><i class="fa-solid fa-download"></i> Export JSON Backup</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"><i class="fa-solid fa-upload"></i> Restore Data</button>
-                    <input type="file" id="import-file" style="display:none;" onchange="importData(event)">
+            <h2>Settings & Theme Customization</h2>
+            <div class="card">
+                <h3>Select Planner Theme</h3>
+                <div style="display:flex; gap:15px; margin-top:15px;">
+                    <button class="btn" onclick="setTheme('strawberry')">Strawberry 🍓</button>
+                    <button class="btn" onclick="setTheme('matcha')">Matcha 🍵</button>
+                    <button class="btn" onclick="setTheme('lavender')">Lavender 🪻</button>
+                    <button class="btn" onclick="setTheme('butter')">Butter 🧈</button>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- ADD CLASS MODAL (TIMETABLE) -->
+    <!-- MODAL: ADD / EDIT CLASS -->
     <div id="add-class-modal" class="modal-overlay">
         <div class="modal-card">
-            <div class="flex-between">
-                <h3>Add Timetable Block</h3>
-                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('add-class-modal')"></i>
-            </div>
-            <form id="add-class-form" onsubmit="saveTimetableBlock(event)" style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
-                <div>
-                    <label style="font-weight:bold; font-size:0.85rem;">Block Title / Subject</label>
-                    <input type="text" id="class-title" required placeholder="e.g. Mathematics, Recess, Duty" style="width:100%;">
+            <h3 id="modal-class-title" style="margin-bottom: 15px;">Add A Class / Event</h3>
+            <form id="add-class-form" onsubmit="saveTimetableBlock(event)">
+                <input type="hidden" id="modal-block-id" value="">
+                
+                <div class="form-group">
+                    <label for="modal-title">Title / Name</label>
+                    <input type="text" id="modal-title" required placeholder="e.g., Mathematics, Reading, Prep">
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <div>
-                        <label style="font-weight:bold; font-size:0.85rem;">Type</label>
-                        <select id="class-type" style="width:100%;">
-                            <option value="Class">Class / Subject</option>
-                            <option value="Recess">Recess</option>
-                            <option value="Lunch">Lunch Period</option>
-                            <option value="Duty">Duty Supervision</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="font-weight:bold; font-size:0.85rem;">Day of Week</label>
-                        <select id="class-day" style="width:100%;">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal-day">Day</label>
+                        <select id="modal-day" required>
                             <option value="Mon">Monday</option>
                             <option value="Tue">Tuesday</option>
                             <option value="Wed">Wednesday</option>
@@ -936,528 +943,456 @@
                             <option value="Fri">Friday</option>
                         </select>
                     </div>
-                </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <div>
-                        <label style="font-weight:bold; font-size:0.85rem;">Start Time</label>
-                        <input type="time" id="class-start" required style="width:100%;" value="09:00">
-                    </div>
-                    <div>
-                        <label style="font-weight:bold; font-size:0.85rem;">Duration (minutes)</label>
-                        <input type="number" id="class-duration" min="5" max="300" step="5" value="50" required style="width:100%;">
-                    </div>
-                </div>
-                <div>
-                    <label style="font-weight:bold; font-size:0.85rem;">Block Color</label>
-                    <div class="color-picker-wrapper" style="margin-top:5px;">
-                        <input type="color" id="class-color-wheel" value="#FFB6C1" oninput="document.getElementById('class-color-hex').value = this.value">
-                        <input type="text" id="class-color-hex" value="#FFB6C1" style="width:110px; font-family:monospace;" oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('class-color-wheel').value = this.value">
+
+                    <div class="form-group">
+                        <label for="modal-type">Type</label>
+                        <select id="modal-type" required>
+                            <option value="Class">Class</option>
+                            <option value="Prep">Prep</option>
+                            <option value="Recess">Recess</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Duty">Duty</option>
+                            <option value="Assembly">Assembly</option>
+                            <option value="Custom">Custom</option>
+                        </select>
                     </div>
                 </div>
-                <div style="margin-top:10px; text-align:right;">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-class-modal')">Cancel</button>
-                    <button type="submit" class="btn"><i class="fa-solid fa-check"></i> Add Block</button>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal-start-time">Start Time</label>
+                        <select id="modal-start-time" required>
+                            <!-- Dynamically populated 8:00 AM to 6:30 PM -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-duration">Duration (Minutes)</label>
+                        <select id="modal-duration" required>
+                            <option value="15">15 mins</option>
+                            <option value="30" selected>30 mins</option>
+                            <option value="45">45 mins</option>
+                            <option value="60">60 mins (1 hr)</option>
+                            <option value="75">75 mins</option>
+                            <option value="90">90 mins (1.5 hrs)</option>
+                            <option value="120">120 mins (2 hrs)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-color">Block Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="modal-color" value="#FF69B4">
+                        <span id="color-hex-label" style="font-size:0.9rem; font-family:var(--font-title);">#FF69B4</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-notes">Notes / Location (Optional)</label>
+                    <input type="text" id="modal-notes" placeholder="e.g., Library, Gym, Room 102">
+                </div>
+
+                <div style="display:flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddClassModal()">Cancel</button>
+                    <button type="submit" class="btn"><i class="fa-solid fa-floppy-disk"></i> Save Class</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- STICKER PALETTE -->
-    <div id="sticker-palette">
-        <span class="sticker-item" onclick="spawnSticker('🌸')">🌸</span>
-        <span class="sticker-item" onclick="spawnSticker('🐱')">🐱</span>
-        <span class="sticker-item" onclick="spawnSticker('⭐')">⭐</span>
-        <span class="sticker-item" onclick="spawnSticker('🎀')">🎀</span>
-        <span class="sticker-item" onclick="spawnSticker('🍓')">🍓</span>
-    </div>
-
-    <!-- STANDARDS MODAL -->
-    <div id="standards-modal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="flex-between">
-                <h3>BC K-5 Curriculum Standards</h3>
-                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('standards-modal')"></i>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-                <select id="std-grade" onchange="loadCurriculumOptions()">
-                    <option value="K">Grade K</option>
-                    <option value="1">Grade 1</option>
-                    <option value="2">Grade 2</option>
-                    <option value="3" selected>Grade 3</option>
-                    <option value="4">Grade 4</option>
-                    <option value="5">Grade 5</option>
-                </select>
-                <select id="std-subject" onchange="loadCurriculumOptions()">
-                    <option value="MATH">Mathematics</option>
-                    <option value="ELA">Language Arts</option>
-                    <option value="SCI">Science</option>
-                </select>
-                <div id="standards-checklist" style="max-height: 200px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
-                    <!-- Dynamically populated -->
-                </div>
-
-                <h4>First Peoples Principles of Learning (FPPL)</h4>
-                <div style="max-height: 120px; overflow-y:auto; border:1px solid var(--border-color); padding:10px; border-radius:8px;">
-                    <label><input type="checkbox" value="FPPL-1"> Learning ultimately supports the well-being of the self, family, community...</label><br>
-                    <label><input type="checkbox" value="FPPL-2"> Learning is holistic, reflexive, reflective, experiential, and relational...</label><br>
-                </div>
-
-                <button class="btn" onclick="attachSelectedStandards()">Attach Selected</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PIN SECURITY MODAL -->
-    <div id="pin-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width:350px; text-align:center;">
-            <h3>Enter Security PIN</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Default PIN is 4125</p>
-            <input type="password" id="pin-input" maxlength="4" style="text-align:center; font-size:1.5rem; width:100px; margin-bottom:15px;">
-            <div>
-                <button class="btn" onclick="verifyPin()">Submit</button>
-                <button class="btn btn-secondary" onclick="closeModal('pin-modal')">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- @MENTION AUTOCOMPLETE OVERLAY -->
-    <div id="mention-dropdown"></div>
-
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- GLOBAL APP STATE & PERSISTENCE ---
-        let appState = {
-            pin: "4125",
-            theme: "strawberry",
-            currentYear: 2026,
-            students: [
-                { id: 1, name: "Zoe Smith", grade: 85, scale: "P", iep: "Visual Schedule" },
-                { id: 2, name: "Alex Jones", grade: 62, scale: "D", iep: "Extra Time" }
-            ],
-            timetableBlocks: [],
-            anecdotals: {},
-            selectedStandards: []
-        };
+        // State Storage
+        let timetableBlocks = JSON.parse(localStorage.getItem('planberry_timetable')) || [];
+        let currentYear = 2026;
+        let draggedBlockId = null;
 
-        const BC_CURRICULUM = {
-            "3": {
-                "MATH": ["Demonstrate fluency with addition facts to 20", "Understand fraction concepts as part of a whole"],
-                "ELA": ["Use foundational reading strategies to comprehend text", "Create stories with clear structure"]
-            }
-        };
-
-        let targetViewAfterPin = "";
-
-        // --- INITIALIZATION ---
-        window.addEventListener('DOMContentLoaded', () => {
-            loadState();
-            initDateDisplay();
-            initDashboardClock();
-            renderDashboardMonthCalendar();
-            renderMiniCalendar();
-            renderYearCalendar(appState.currentYear);
-            renderStudentTable();
+        // On Load Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            initClock();
+            initMonthCalendar();
+            populateTimeSelects();
             renderTimetable();
-            renderTodayOverview();
-            renderWeeklyPlanner();
-            initGrowthChart();
-            setupAutosave();
+            setupDragAndDrop();
+
+            // Color picker hex display updater
+            document.getElementById('modal-color').addEventListener('input', (e) => {
+                document.getElementById('color-hex-label').textContent = e.target.value.toUpperCase();
+            });
         });
 
-        function saveState() {
-            localStorage.setItem('kawaii_planner_data', JSON.stringify(appState));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem('kawaii_planner_data');
-            if(saved) {
-                appState = Object.assign(appState, JSON.parse(saved));
-            }
-            if (!appState.timetableBlocks) {
-                appState.timetableBlocks = [];
-            }
-            setTheme(appState.theme);
-        }
-
-        function setupAutosave() {
-            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-                el.addEventListener('input', () => saveState());
-            });
-        }
-
-        // --- UI & NAVIGATION ---
+        // Navigation
         function switchView(viewId) {
-            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             
-            const target = document.getElementById(`view-${viewId}`);
-            if(target) target.classList.add('active');
-
-            // Highlight active navigation button
-            const navBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick')?.includes(viewId));
-            if (navBtn) navBtn.classList.add('active');
+            const targetView = document.getElementById(`view-${viewId}`);
+            if(targetView) targetView.classList.add('active');
             
-            saveState();
+            const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(viewId));
+            if(activeBtn) activeBtn.classList.add('active');
         }
 
-        function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            appState.theme = themeName;
-            saveState();
+        function promptPinForView(viewId) {
+            const pin = prompt("Enter PIN to access (Default: 1234):");
+            if(pin === "1234" || pin === "") {
+                switchView(viewId);
+            } else {
+                alert("Incorrect PIN.");
+            }
         }
 
-        function initDateDisplay() {
-            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-            document.getElementById('current-date-badge').innerText = new Date().toLocaleDateString('en-US', options);
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
         }
 
-        // --- AM/PM CLOCK HANDLER ---
-        function initDashboardClock() {
-            function updateClock() {
+        // Live Clock & Date
+        function initClock() {
+            function update() {
                 const now = new Date();
-                let hours = now.getHours();
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12;
                 const clockEl = document.getElementById('dashboard-clock');
-                if (clockEl) {
-                    clockEl.innerText = `${hours}:${minutes} ${ampm}`;
+                const dateEl = document.getElementById('current-date-badge');
+                
+                if(clockEl) {
+                    clockEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                }
+                if(dateEl) {
+                    dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
                 }
             }
-            updateClock();
-            setInterval(updateClock, 1000);
+            update();
+            setInterval(update, 1000);
         }
 
-        // --- AUTO-CHANGING DASHBOARD MONTH GRID ---
-        function renderDashboardMonthCalendar() {
-            const header = document.getElementById('dash-month-calendar-header');
+        // Dashboard Month Grid
+        function initMonthCalendar() {
             const grid = document.getElementById('dash-month-calendar-grid');
-            if (!header || !grid) return;
+            const header = document.getElementById('dash-month-calendar-header');
+            if(!grid || !header) return;
 
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
-            const todayDate = now.getDate();
-
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            header.innerText = `${monthNames[month]} ${year}`;
+            
+            header.textContent = `${monthNames[month]} ${year}`;
+            grid.innerHTML = '';
 
-            const daysHead = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-            grid.innerHTML = daysHead.map(d => `<div class="dash-month-day-head">${d}</div>`).join('');
+            const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            days.forEach(d => {
+                grid.innerHTML += `<div class="dash-month-day-head">${d}</div>`;
+            });
 
-            const firstDayIndex = new Date(year, month, 1).getDay();
+            const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            for (let i = 0; i < firstDayIndex; i++) {
+            for(let i = 0; i < firstDay; i++) {
                 grid.innerHTML += `<div class="dash-month-cell empty"></div>`;
             }
 
-            for (let day = 1; day <= daysInMonth; day++) {
-                const isToday = day === todayDate;
-                grid.innerHTML += `<div class="dash-month-cell ${isToday ? 'today' : ''}">${day}</div>`;
+            for(let d = 1; d <= daysInMonth; d++) {
+                const isToday = d === now.getDate();
+                grid.innerHTML += `<div class="dash-month-cell ${isToday ? 'today' : ''}">${d}</div>`;
             }
         }
 
-        // --- SECURITY PIN HANDLER ---
-        function promptPinForView(viewId) {
-            targetViewAfterPin = viewId;
-            document.getElementById('pin-input').value = "";
-            document.getElementById('pin-modal').style.display = 'flex';
-        }
+        // Populating Time Dropdowns
+        function populateTimeSelects() {
+            const startSelect = document.getElementById('modal-start-time');
+            if(!startSelect) return;
+            startSelect.innerHTML = '';
 
-        function verifyPin() {
-            const entered = document.getElementById('pin-input').value;
-            if(entered === appState.pin) {
-                closeModal('pin-modal');
-                switchView(targetViewAfterPin);
-            } else {
-                alert("Incorrect PIN! Default is 4125");
+            for(let hour = 8; hour <= 18; hour++) {
+                for(let min of [0, 30]) {
+                    if(hour === 18 && min === 30) continue;
+                    const timeMinutes = hour * 60 + min;
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+                    const displayMin = min === 0 ? '00' : min;
+                    const label = `${displayHour}:${displayMin} ${ampm}`;
+
+                    const opt = document.createElement('option');
+                    opt.value = timeMinutes;
+                    opt.textContent = label;
+                    startSelect.appendChild(opt);
+                }
             }
         }
 
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // --- TIMETABLE INTERACTIVE ENGINE ---
-        function openAddClassModal() {
-            document.getElementById('add-class-form').reset();
-            document.getElementById('class-color-wheel').value = "#FFB6C1";
-            document.getElementById('class-color-hex').value = "#FFB6C1";
-            document.getElementById('add-class-modal').style.display = 'flex';
-        }
-
-        function saveTimetableBlock(e) {
-            e.preventDefault();
-            const title = document.getElementById('class-title').value.trim();
-            const type = document.getElementById('class-type').value;
-            const day = document.getElementById('class-day').value;
-            const startTime = document.getElementById('class-start').value;
-            const duration = parseInt(document.getElementById('class-duration').value, 10);
-            const color = document.getElementById('class-color-hex').value;
-
-            if (!title || !startTime || !duration) return;
-
-            const block = {
-                id: Date.now(),
-                title,
-                type,
-                day,
-                startTime,
-                duration,
-                color
-            };
-
-            appState.timetableBlocks.push(block);
-            saveState();
-            renderTimetable();
-            renderTodayOverview();
-            renderWeeklyPlanner();
-            closeModal('add-class-modal');
-        }
-
-        function deleteTimetableBlock(id) {
-            appState.timetableBlocks = appState.timetableBlocks.filter(b => b.id !== id);
-            saveState();
-            renderTimetable();
-            renderTodayOverview();
-            renderWeeklyPlanner();
-        }
-
-        function timeToMinutes(tStr) {
-            const [h, m] = tStr.split(':').map(Number);
-            return h * 60 + m;
-        }
-
-        function minutesToAMPM(min) {
-            let h = Math.floor(min / 60);
-            const m = min % 60;
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            h = h % 12;
-            h = h ? h : 12;
-            return `${h}:${String(m).padStart(2, '0')} ${ampm}`;
-        }
-
+        // Timetable Rendering & Functions
         function renderTimetable() {
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-            const dayStartMinutes = 8 * 60; // 8:00 AM
-
-            days.forEach(day => {
+            ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(day => {
                 const col = document.getElementById(`timetable-day-${day}`);
-                if (!col) return;
-                col.innerHTML = '';
+                if(col) col.innerHTML = '';
+            });
 
-                const dayBlocks = appState.timetableBlocks.filter(b => b.day === day);
-                dayBlocks.forEach(block => {
-                    const blockStartMin = timeToMinutes(block.startTime);
-                    const offsetMin = blockStartMin - dayStartMinutes;
-                    if (offsetMin < 0) return; // earlier than 8 AM
+            timetableBlocks.forEach(block => {
+                const col = document.getElementById(`timetable-day-${block.day}`);
+                if(!col) return;
 
-                    const topPx = (offsetMin / 30) * 40; // 40px per 30 minutes
-                    const heightPx = (block.duration / 30) * 40;
-                    const endTimeMin = blockStartMin + block.duration;
+                // Calculate Top Position and Height
+                // Base start: 8:00 AM (480 mins) -> 0px. 1 hr = 80px (40px per 30 mins)
+                const startMins = parseInt(block.startTime);
+                const topPx = ((startMins - 480) / 30) * 40;
+                const heightPx = (parseInt(block.duration) / 30) * 40;
 
-                    const blockEl = document.createElement('div');
-                    blockEl.className = 'timetable-class-block';
-                    blockEl.style.top = `${topPx}px`;
-                    blockEl.style.height = `${heightPx}px`;
+                const blockEl = document.createElement('div');
+                blockEl.className = 'timetable-class-block';
+                blockEl.setAttribute('draggable', 'true');
+                blockEl.dataset.id = block.id;
+
+                // Dynamic Styling based on Type
+                if (block.type === 'Class') {
+                    blockEl.classList.add('type-class');
                     blockEl.style.backgroundColor = block.color;
+                    blockEl.style.border = 'none';
+                } else {
+                    blockEl.classList.add('type-ring');
+                    blockEl.style.borderColor = block.color;
+                    blockEl.style.borderStyle = 'solid';
+                    blockEl.style.borderWidth = '3px';
+                    blockEl.style.color = block.color;
+                }
 
-                    blockEl.innerHTML = `
+                blockEl.style.top = `${topPx}px`;
+                blockEl.style.height = `${heightPx}px`;
+
+                // Calculate Display Times
+                const startAmpm = Math.floor(startMins / 60) >= 12 ? 'PM' : 'AM';
+                let startHr = Math.floor(startMins / 60);
+                if (startHr > 12) startHr -= 12;
+                if (startHr === 0) startHr = 12;
+                const startMn = (startMins % 60) === 0 ? '00' : (startMins % 60);
+
+                const endMins = startMins + parseInt(block.duration);
+                const endAmpm = Math.floor(endMins / 60) >= 12 ? 'PM' : 'AM';
+                let endHr = Math.floor(endMins / 60);
+                if (endHr > 12) endHr -= 12;
+                if (endHr === 0) endHr = 12;
+                const endMn = (endMins % 60) === 0 ? '00' : (endMins % 60);
+
+                const timeLabel = `${startHr}:${startMn} ${startAmpm} - ${endHr}:${endMn} ${endAmpm}`;
+
+                blockEl.innerHTML = `
+                    <div>
                         <div class="timetable-block-title">${block.title}</div>
-                        <div class="timetable-block-meta">
-                            <span>${minutesToAMPM(blockStartMin)} - ${minutesToAMPM(endTimeMin)}</span>
-                            <button class="delete-block-btn" onclick="event.stopPropagation(); deleteTimetableBlock(${block.id})"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                    `;
-                    col.appendChild(blockEl);
+                        ${block.notes ? `<div style="font-size:0.7rem; opacity:0.8;">${block.notes}</div>` : ''}
+                    </div>
+                    <div class="timetable-block-meta">
+                        <span>${timeLabel}</span>
+                        <button class="delete-block-btn" title="Delete Block" onclick="deleteBlock(event, '${block.id}')"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+
+                // Click to Edit Event
+                blockEl.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-block-btn')) return;
+                    openEditClassModal(block.id);
+                });
+
+                // Drag Event Listeners
+                blockEl.addEventListener('dragstart', (e) => {
+                    draggedBlockId = block.id;
+                    e.dataTransfer.setData('text/plain', block.id);
+                    blockEl.style.opacity = '0.4';
+                });
+
+                blockEl.addEventListener('dragend', () => {
+                    blockEl.style.opacity = '1';
+                    draggedBlockId = null;
+                });
+
+                col.appendChild(blockEl);
+            });
+        }
+
+        // Setup Drag and Drop Containers
+        function setupDragAndDrop() {
+            const cols = document.querySelectorAll('.timetable-day-slots');
+            cols.forEach(col => {
+                col.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    col.classList.add('drag-over');
+                });
+
+                col.addEventListener('dragleave', () => {
+                    col.classList.remove('drag-over');
+                });
+
+                col.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    col.classList.remove('drag-over');
+                    const blockId = e.dataTransfer.getData('text/plain') || draggedBlockId;
+                    if (!blockId) return;
+
+                    const block = timetableBlocks.find(b => b.id === blockId);
+                    if (!block) return;
+
+                    const targetDay = col.dataset.day;
+                    const rect = col.getBoundingClientRect();
+                    const offsetY = e.clientY - rect.top;
+
+                    // Calculate nearest 30-minute slot (40px per 30 mins)
+                    let slotIndex = Math.floor(offsetY / 40);
+                    if (slotIndex < 0) slotIndex = 0;
+                    if (slotIndex > 21) slotIndex = 21; // Clamp up to 6:30 PM slot
+
+                    const newStartTime = 480 + (slotIndex * 30); // 8:00 AM base (480 mins)
+
+                    block.day = targetDay;
+                    block.startTime = newStartTime;
+
+                    saveTimetableToStorage();
+                    renderTimetable();
                 });
             });
         }
 
-        // --- POPULATE OTHER PAGES FROM TIMETABLE ---
-        function renderTodayOverview() {
-            const container = document.getElementById('dash-schedule-list');
-            if (!container) return;
+        // Modal Handlers
+        function openAddClassModal() {
+            document.getElementById('modal-class-title').textContent = "Add A Class / Event";
+            document.getElementById('modal-block-id').value = "";
+            document.getElementById('modal-title').value = "";
+            document.getElementById('modal-day').value = "Mon";
+            document.getElementById('modal-type').value = "Class";
+            document.getElementById('modal-start-time').value = "540"; // 9:00 AM default
+            document.getElementById('modal-duration').value = "30";
+            document.getElementById('modal-color').value = "#FF69B4";
+            document.getElementById('color-hex-label').textContent = "#FF69B4";
+            document.getElementById('modal-notes').value = "";
 
-            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const todayCode = dayNames[new Date().getDay()];
-            const todayBlocks = appState.timetableBlocks.filter(b => b.day === todayCode);
-
-            if (todayBlocks.length === 0) {
-                container.innerHTML = `<p style="color:var(--text-muted);">No schedule items configured for today (${todayCode}).</p>`;
-                return;
-            }
-
-            todayBlocks.sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
-
-            container.innerHTML = todayBlocks.map(b => {
-                const startMin = timeToMinutes(b.startTime);
-                const endMin = startMin + b.duration;
-                return `
-                    <div style="background:${b.color}; color:#fff; border-radius:12px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-title);">
-                        <span><b>${b.title}</b> (${b.type})</span>
-                        <span style="font-size:0.85rem;">${minutesToAMPM(startMin)} - ${minutesToAMPM(endMin)}</span>
-                    </div>
-                `;
-            }).join('');
+            document.getElementById('add-class-modal').style.display = 'flex';
         }
 
-        function renderWeeklyPlanner() {
-            const container = document.getElementById('weekly-plan-blocks');
-            if (!container) return;
+        function openEditClassModal(blockId) {
+            const block = timetableBlocks.find(b => b.id === blockId);
+            if (!block) return;
 
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-            container.innerHTML = days.map(day => {
-                const blocks = appState.timetableBlocks.filter(b => b.day === day);
-                blocks.sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
-                
-                const dayCards = blocks.map(b => `
-                    <div style="background:${b.color}; color:#fff; padding:6px 8px; border-radius:8px; margin-bottom:6px; font-size:0.8rem; font-family:var(--font-title);">
-                        <strong>${b.title}</strong><br>
-                        <small>${minutesToAMPM(timeToMinutes(b.startTime))}</small>
-                    </div>
-                `).join('');
+            document.getElementById('modal-class-title').textContent = "Edit Class / Event";
+            document.getElementById('modal-block-id').value = block.id;
+            document.getElementById('modal-title').value = block.title;
+            document.getElementById('modal-day').value = block.day;
+            document.getElementById('modal-type').value = block.type || "Class";
+            document.getElementById('modal-start-time').value = block.startTime;
+            document.getElementById('modal-duration').value = block.duration;
+            document.getElementById('modal-color').value = block.color;
+            document.getElementById('color-hex-label').textContent = block.color.toUpperCase();
+            document.getElementById('modal-notes').value = block.notes || "";
 
-                return `
-                    <div style="border:1.5px dashed var(--border-color); border-radius:12px; padding:8px; background:#FAFAFA;">
-                        ${dayCards || `<span style="font-size:0.75rem; color:var(--text-muted);">No Blocks</span>`}
-                    </div>
-                `;
-            }).join('');
+            document.getElementById('add-class-modal').style.display = 'flex';
         }
 
-        // --- CALENDAR & STICKERS ---
-        function renderMiniCalendar() {
-            const container = document.getElementById('mini-calendar-container');
-            container.innerHTML = "<p style='font-size:0.85rem; color:var(--text-muted);'>Active Week: Oct 12 - Oct 16, 2026</p>";
+        function closeAddClassModal() {
+            document.getElementById('add-class-modal').style.display = 'none';
         }
 
-        function renderYearCalendar(year) {
-            const display = document.getElementById('calendar-year-display');
-            const grid = document.getElementById('year-grid');
-            if(!display || !grid) return;
-            display.innerText = year;
-            grid.innerHTML = "";
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            months.forEach(m => {
-                grid.innerHTML += `<div style="padding:15px; background:var(--secondary); border-radius:12px; text-align:center; font-family:var(--font-title); color:var(--primary-dark);">${m} ${year}</div>`;
-            });
-        }
+        function saveTimetableBlock(e) {
+            e.preventDefault();
+            const id = document.getElementById('modal-block-id').value;
+            const title = document.getElementById('modal-title').value;
+            const day = document.getElementById('modal-day').value;
+            const type = document.getElementById('modal-type').value;
+            const startTime = parseInt(document.getElementById('modal-start-time').value);
+            const duration = parseInt(document.getElementById('modal-duration').value);
+            const color = document.getElementById('modal-color').value;
+            const notes = document.getElementById('modal-notes').value;
 
-        function changeYear(delta) {
-            appState.currentYear += delta;
-            renderYearCalendar(appState.currentYear);
-        }
-
-        function spawnSticker(emoji) {
-            const sticker = document.createElement('div');
-            sticker.className = 'placed-sticker';
-            sticker.innerText = emoji;
-            sticker.style.left = '50%';
-            sticker.style.top = '50%';
-            document.body.appendChild(sticker);
-            
-            let isDragging = false;
-            sticker.addEventListener('mousedown', () => isDragging = true);
-            window.addEventListener('mousemove', (e) => {
-                if(isDragging) {
-                    sticker.style.left = `${e.clientX - 20}px`;
-                    sticker.style.top = `${e.clientY - 20}px`;
+            if (id) {
+                // Update Existing
+                const index = timetableBlocks.findIndex(b => b.id === id);
+                if (index !== -1) {
+                    timetableBlocks[index] = { id, title, day, type, startTime, duration, color, notes };
                 }
-            });
-            window.addEventListener('mouseup', () => isDragging = false);
-            sticker.addEventListener('dblclick', () => sticker.remove());
+            } else {
+                // Create New
+                const newBlock = {
+                    id: 'block_' + Date.now(),
+                    title,
+                    day,
+                    type,
+                    startTime,
+                    duration,
+                    color,
+                    notes
+                };
+                timetableBlocks.push(newBlock);
+            }
+
+            saveTimetableToStorage();
+            renderTimetable();
+            closeAddClassModal();
         }
 
-        // --- STUDENT HUB & ANALYTICS ---
-        function renderStudentTable() {
-            const tbody = document.getElementById('student-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = appState.students.map(s => `
-                <tr>
-                    <td><b>${s.name}</b></td>
-                    <td><input type="number" value="${s.grade}" style="width:70px;" onchange="updateStudentGrade(${s.id}, this.value)"></td>
-                    <td><span class="pill-tag">${s.scale}</span></td>
-                    <td><input type="text" value="${s.iep}" onchange="updateStudentIEP(${s.id}, this.value)"></td>
-                    <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="alert('Anecdotal History Log for ${s.name}')">View Notes</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function updateStudentGrade(id, val) {
-            const s = appState.students.find(item => item.id === id);
-            if(s) {
-                s.grade = parseInt(val, 10);
-                s.scale = s.grade >= 80 ? 'Extending (E)' : s.grade >= 65 ? 'Proficient (P)' : 'Developing (D)';
-                saveState();
-                renderStudentTable();
+        function deleteBlock(e, blockId) {
+            e.stopPropagation();
+            if (confirm("Are you sure you want to delete this block?")) {
+                timetableBlocks = timetableBlocks.filter(b => b.id !== blockId);
+                saveTimetableToStorage();
+                renderTimetable();
             }
         }
 
-        function updateStudentIEP(id, val) {
-            const s = appState.students.find(item => item.id === id);
-            if(s) { s.iep = val; saveState(); }
+        function saveTimetableToStorage() {
+            localStorage.setItem('planberry_timetable', JSON.stringify(timetableBlocks));
+        }
+
+        // Multi-Year Calendar Helper Functions
+        function changeYear(delta) {
+            currentYear += delta;
+            document.getElementById('calendar-year-display').textContent = currentYear;
+        }
+
+        // Text Formatting Utilities
+        function formatDoc(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+        }
+
+        function applyTemplate(template) {
+            const editor = document.getElementById('daily-editor');
+            if(!editor) return;
+            if(template === '5e') {
+                editor.innerHTML = `<h3>5E Lesson Model</h3><p><b>Engage:</b> </p><p><b>Explore:</b> </p><p><b>Explain:</b> </p><p><b>Elaborate:</b> </p><p><b>Evaluate:</b> </p>`;
+            } else if(template === 'workshop') {
+                editor.innerHTML = `<h3>Workshop Model</h3><p><b>Mini-Lesson (10-15 mins):</b> </p><p><b>Independent Practice / Small Groups:</b> </p><p><b>Debrief / Sharing:</b> </p>`;
+            }
+        }
+
+        function handleMentionSearch(e) {
+            // Mention logic handler placeholder
         }
 
         function addStudent() {
             const name = prompt("Enter student name:");
-            if(name) {
-                appState.students.push({ id: Date.now(), name, grade: 70, scale: "P", iep: "None" });
-                saveState();
-                renderStudentTable();
+            if(!name) return;
+            const tbody = document.getElementById('student-table-body');
+            if(tbody) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${name}</b></td>
+                    <td><input type="text" placeholder="Score / Grade" style="width:100%;"></td>
+                    <td>
+                        <select style="width:100%;">
+                            <option>Emerging</option>
+                            <option>Developing</option>
+                            <option selected>Proficient</option>
+                            <option>Extending</option>
+                        </select>
+                    </td>
+                    <td><input type="text" placeholder="Notes..." style="width:100%;"></td>
+                    <td><input type="text" placeholder="Anecdotal notes..." style="width:100%;"></td>
+                `;
+                tbody.appendChild(tr);
             }
-        }
-
-        function initGrowthChart() {
-            const ctx = document.getElementById('growthChart');
-            if(!ctx) return;
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Term 1', 'Term 2', 'Term 3'],
-                    datasets: [{
-                        label: 'Class Average Standard Growth',
-                        data: [2.8, 3.2, 3.6],
-                        borderColor: '#FF69B4',
-                        backgroundColor: 'rgba(255,182,193,0.3)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        // --- BACKUP & EXPORT ---
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "planberry_backup.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-        }
-
-        function importData(e) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                appState = JSON.parse(event.target.result);
-                saveState();
-                location.reload();
-            };
-            reader.readAsText(e.target.files[0]);
         }
 
         function exportPDF() {
             const element = document.getElementById('printable-weekly-area');
-            html2pdf().from(element).save('weekly_plan.pdf');
-        }
-
-        function formatDoc(cmd, value = null) {
-            document.execCommand(cmd, false, value);
+            if(window.html2pdf && element) {
+                html2pdf().from(element).save('Weekly_Plan.pdf');
+            } else {
+                window.print();
+            }
         }
     </script>
 </body>
