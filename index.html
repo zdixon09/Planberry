@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kawaii BC K-5 Teacher Planner</title>
+    <title>Planberry BC K-5 Teacher Planner</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,7 +75,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
+            user-select: text; /* Enabled full copy/paste selecting across app */
         }
 
         body {
@@ -115,6 +115,12 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+        }
+
+        .kawaii-berry-img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
 
         .nav-menu {
@@ -233,7 +239,6 @@
             outline: none;
             background: #FAFAFA;
             color: var(--text-main);
-            user-select: text;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -271,7 +276,6 @@
             font-size: 2.5rem;
             cursor: move;
             z-index: 500;
-            user-select: none;
         }
 
         /* Dashboard View Layout */
@@ -283,37 +287,131 @@
 
         .dash-overview { grid-column: span 8; }
         .dash-notes { grid-column: span 4; }
+        .dash-clock { grid-column: span 4; }
+        .dash-monthgrid { grid-column: span 8; }
         .dash-calendar { grid-column: span 6; }
-        .dash-alerts { grid-column: span 6; }
+        .dash-birthdays { grid-column: span 6; }
 
-        /* Timetable & Calendar */
-        .timetable-grid {
-            display: grid;
-            grid-template-columns: 80px repeat(5, 1fr);
-            gap: 10px;
+        /* Timetable Grid & Block System */
+        .timetable-container {
+            display: flex;
+            gap: 15px;
             overflow-x: auto;
         }
 
-        .time-col { font-weight: bold; text-align: center; color: var(--text-muted); }
-        .day-header { text-align: center; font-family: var(--font-title); padding: 10px; background: var(--secondary); border-radius: 12px; }
+        .time-labels-column {
+            width: 110px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 40px;
+        }
 
-        .time-slot {
-            min-height: 80px;
-            background: #FAFAFA;
-            border: 1.5px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 5px;
+        .time-label-slot {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--secondary);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .timetable-days-wrapper {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .timetable-day-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
             position: relative;
         }
 
-        .schedule-block {
-            background: var(--primary);
-            border-radius: 8px;
+        .tt-day-header {
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--secondary);
+            border-radius: 12px;
+            font-family: var(--font-title);
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .tt-day-grid-body {
+            position: relative;
+            background: #FAFAFA;
+            border: 1.5px dashed var(--border-color);
+            border-radius: 12px;
+            min-height: 1200px; /* 30 half-hour slots * 40px */
+        }
+
+        .timetable-block-item {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            border-radius: 10px;
             padding: 8px;
+            color: #FFF;
             font-size: 0.85rem;
-            margin-bottom: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .timetable-block-item .block-title {
+            font-family: var(--font-title);
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .timetable-block-item .block-time {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .timetable-block-item .block-type {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.15);
+            padding: 2px 6px;
+            border-radius: 6px;
+            align-self: flex-start;
+        }
+
+        .block-delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.2);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .block-delete-btn:hover {
+            background: rgba(255,0,0,0.6);
         }
 
         /* Modal Overlay */
@@ -337,6 +435,24 @@
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
+        }
+
+        /* Color Picker Wheel UI */
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .color-picker-wrapper input[type="color"] {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
         }
 
         /* Rich Text Editor Tools */
@@ -366,7 +482,6 @@
             padding: 15px;
             background: white;
             outline: none;
-            user-select: text;
         }
 
         /* Autocomplete Mention Box */
@@ -406,7 +521,6 @@
 
         /* Utility */
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .hidden { display: none !important; }
 
         /* Calendar Styling */
         .calendar-month-card {
@@ -434,8 +548,8 @@
             padding: 2px 0;
         }
         .calendar-day-cell {
-            padding: 4px;
-            border-radius: 4px;
+            padding: 6px 4px;
+            border-radius: 6px;
             background: #FAFAFA;
         }
         .calendar-day-cell.today {
@@ -453,12 +567,33 @@
     <!-- SIDEBAR NAVIGATION -->
     <nav id="app-sidebar">
         <div class="brand-header">
-            <h1><i class="fa-solid fa-heart"></i> KawaiiPlan</h1>
+            <h1>
+                <!-- Kawaii Cute Strawberry Icon -->
+                <svg class="kawaii-berry-img" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 12C32 12 24 4 14 8C14 14 20 20 24 20C18 22 10 24 10 32C10 48 24 58 32 60C40 58 54 48 54 32C54 24 46 22 40 20C44 20 50 14 50 8C40 4 32 12 32 12Z" fill="#FF5E7E"/>
+                    <path d="M32 12C32 6 36 2 36 2C36 2 30 4 28 8C26 4 20 2 20 2C20 2 24 6 24 12C20 10 14 8 14 8C19 13 25 15 32 15C39 15 45 13 50 8C50 8 44 10 40 12" fill="#77DD77"/>
+                    <!-- Cute Eyes -->
+                    <circle cx="25" cy="34" r="3" fill="#3C2F4D"/>
+                    <circle cx="26" cy="33" r="1" fill="#FFFFFF"/>
+                    <circle cx="39" cy="34" r="3" fill="#3C2F4D"/>
+                    <circle cx="40" cy="33" r="1" fill="#FFFFFF"/>
+                    <!-- Cheeks -->
+                    <ellipse cx="20" cy="38" rx="3.5" ry="2" fill="#FF9EAA"/>
+                    <ellipse cx="44" cy="38" rx="3.5" ry="2" fill="#FF9EAA"/>
+                    <!-- Cute Smile -->
+                    <path d="M29 39C29 41 35 41 35 39" stroke="#3C2F4D" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Seeds -->
+                    <circle cx="22" cy="48" r="1" fill="#FFD1DC"/>
+                    <circle cx="32" cy="52" r="1" fill="#FFD1DC"/>
+                    <circle cx="42" cy="48" r="1" fill="#FFD1DC"/>
+                </svg>
+                Planberry
+            </h1>
             <span style="font-size:0.75rem; color:var(--text-muted);">BC K-5 Teacher Suite</span>
         </div>
         <div class="nav-menu">
             <button class="nav-btn active" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</button>
-            <button class="nav-btn" onclick="switchView('timetable')"><i class="fa-solid fa-clock"></i> Timetable Setup</button>
+            <button class="nav-btn" onclick="switchView('timetable')"><i class="fa-solid fa-clock"></i> Timetable</button>
             <button class="nav-btn" onclick="switchView('calendar')"><i class="fa-solid fa-calendar-days"></i> Year Calendar</button>
             <button class="nav-btn" onclick="switchView('weekly')"><i class="fa-solid fa-calendar-week"></i> Weekly Planner</button>
             <button class="nav-btn" onclick="switchView('daily')"><i class="fa-solid fa-calendar-day"></i> Daily Planner</button>
@@ -477,57 +612,89 @@
         <!-- DASHBOARD VIEW -->
         <section id="view-dashboard" class="view-panel active">
             <div class="flex-between">
-                <h2>Welcome Back, Teacher! 🌸</h2>
+                <h2>Welcome Back, Zoe! 🌸</h2>
                 <div id="current-date-badge" class="pill-tag"></div>
             </div>
 
             <div class="dashboard-grid">
-                <!-- Today's Schedule Card -->
+                <!-- AM/PM Live Clock Box (No Title) -->
+                <div class="card dash-clock" style="display:flex; align-items:center; justify-content:center; padding: 25px;">
+                    <div id="dashboard-clock-display" style="font-family: var(--font-title); font-size: 2.5rem; color: var(--primary-dark); font-weight: 700;">--:-- --</div>
+                </div>
+
+                <!-- Sticky Note Card (Icon only, no title) -->
+                <div class="card dash-notes" style="background:#FFFDE7;">
+                    <i class="fa-solid fa-note-sticky" style="font-size: 1.4rem; color: var(--accent); margin-bottom: 8px; display:block;"></i>
+                    <div id="sticky-note-editor" class="rich-editor" contenteditable="true" style="min-height: 100px; background: transparent; border: none;" placeholder="Jot down quick reminders..."></div>
+                </div>
+
+                <!-- Current Month Grid Card (Auto-changes, No Title) -->
+                <div class="card dash-monthgrid">
+                    <div id="dashboard-auto-month-grid"></div>
+                </div>
+
+                <!-- Today's Overview Card -->
                 <div class="card dash-overview">
-                    <h3><i class="fa-solid fa-sun"></i> Today's Overview</h3>
+                    <h3><i class="fa-solid fa-calendar-day"></i> Today's Overview</h3>
                     <div id="dash-schedule-list" style="margin-top: 15px;">
                         <p style="color:var(--text-muted);">No schedule configured yet. Setup your timetable!</p>
                     </div>
                 </div>
 
-                <!-- Sticky Notes Card -->
-                <div class="card dash-notes" style="background:#FFFDE7;">
-                    <h3><i class="fa-solid fa-note-sticky"></i> Quick Sticky Note</h3>
-                    <div id="sticky-note-editor" class="rich-editor" contenteditable="true" style="min-height: 120px; background: transparent; border: none;" placeholder="Jot down quick reminders..."></div>
-                </div>
-
-                <!-- Calendar View -->
+                <!-- Upcoming Dates View (Renamed) -->
                 <div class="card dash-calendar">
-                    <h3><i class="fa-solid fa-calendar"></i> Mini Calendar</h3>
+                    <h3><i class="fa-solid fa-calendar"></i> Upcoming Dates</h3>
                     <div id="mini-calendar-container" style="margin-top: 10px;"></div>
                 </div>
 
-                <!-- Alerts & Birthdays -->
-                <div class="card dash-alerts">
-                    <h3><i class="fa-solid fa-cake-candles"></i> Birthdays & Alerts</h3>
-                    <ul id="alerts-list" style="margin-top:10px; list-style:none; line-height:2;">
+                <!-- Birthdays Card (Birthdays only) -->
+                <div class="card dash-birthdays">
+                    <h3><i class="fa-solid fa-cake-candles"></i> Birthdays</h3>
+                    <ul id="birthdays-list" style="margin-top:10px; list-style:none; line-height:2;">
                         <li>🎈 Zoe's Birthday - Oct 12</li>
-                        <li>⚠️ Math Accommodation: Alex (Extra Time)</li>
+                        <li>🎈 Alex's Birthday - Nov 04</li>
+                        <li>🎈 Sam's Birthday - Jan 22</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- TIMETABLE SETUP VIEW -->
+        <!-- TIMETABLE VIEW -->
         <section id="view-timetable" class="view-panel">
             <div class="flex-between">
-                <h2>Timetable Configuration</h2>
-                <button class="btn" onclick="addTimetableBlock()"><i class="fa-solid fa-plus"></i> Add Block</button>
+                <h2>Timetable</h2>
+                <button class="btn" onclick="openAddClassModal()"><i class="fa-solid fa-plus"></i> Add A Class</button>
             </div>
             <div class="card">
-                <div class="timetable-grid" id="timetable-editor-grid">
-                    <div></div>
-                    <div class="day-header">Monday</div>
-                    <div class="day-header">Tuesday</div>
-                    <div class="day-header">Wednesday</div>
-                    <div class="day-header">Thursday</div>
-                    <div class="day-header">Friday</div>
-                    <!-- Time slots populated via JS -->
+                <div class="timetable-container">
+                    <!-- Left Side: Kawaii Theme Times in 30-min increments -->
+                    <div class="time-labels-column" id="time-labels-col">
+                        <!-- Filled by JS (8:00 AM to 4:00 PM) -->
+                    </div>
+
+                    <!-- Days Grid -->
+                    <div class="timetable-days-wrapper">
+                        <div class="timetable-day-column">
+                            <div class="tt-day-header">Monday</div>
+                            <div class="tt-day-grid-body" id="tt-day-Mon"></div>
+                        </div>
+                        <div class="timetable-day-column">
+                            <div class="tt-day-header">Tuesday</div>
+                            <div class="tt-day-grid-body" id="tt-day-Tue"></div>
+                        </div>
+                        <div class="timetable-day-column">
+                            <div class="tt-day-header">Wednesday</div>
+                            <div class="tt-day-grid-body" id="tt-day-Wed"></div>
+                        </div>
+                        <div class="timetable-day-column">
+                            <div class="tt-day-header">Thursday</div>
+                            <div class="tt-day-grid-body" id="tt-day-Thu"></div>
+                        </div>
+                        <div class="timetable-day-column">
+                            <div class="tt-day-header">Friday</div>
+                            <div class="tt-day-grid-body" id="tt-day-Fri"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -553,14 +720,14 @@
             </div>
             <div class="card" id="printable-weekly-area">
                 <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px;">
-                    <div class="day-header">Mon</div>
-                    <div class="day-header">Tue</div>
-                    <div class="day-header">Wed</div>
-                    <div class="day-header">Thu</div>
-                    <div class="day-header">Fri</div>
+                    <div class="day-header tt-day-header">Mon</div>
+                    <div class="day-header tt-day-header">Tue</div>
+                    <div class="day-header tt-day-header">Wed</div>
+                    <div class="day-header tt-day-header">Thu</div>
+                    <div class="day-header tt-day-header">Fri</div>
                 </div>
                 <div id="weekly-plan-blocks" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; margin-top:10px; min-height:400px;">
-                    <!-- Blocks populated -->
+                    <!-- Autopopulated from Timetable -->
                 </div>
             </div>
         </section>
@@ -698,6 +865,64 @@
 
     </main>
 
+    <!-- ADD CLASS MODAL -->
+    <div id="add-class-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 450px;">
+            <div class="flex-between">
+                <h3>Add A Class Block</h3>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('add-class-modal')"></i>
+            </div>
+            <form onsubmit="saveNewClassBlock(event)" style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Class / Event Name</label>
+                    <input type="text" id="cls-name" placeholder="e.g. Math, Recess, Duty" required style="width:100%;">
+                </div>
+
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Type</label>
+                    <select id="cls-type" style="width:100%;">
+                        <option value="Lesson">Lesson / Class</option>
+                        <option value="Recess">Recess</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Duty">On-Duty Supervision</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Day of Week</label>
+                    <select id="cls-day" style="width:100%;">
+                        <option value="Mon">Monday</option>
+                        <option value="Tue">Tuesday</option>
+                        <option value="Wed">Wednesday</option>
+                        <option value="Thu">Thursday</option>
+                        <option value="Fri">Friday</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label style="font-size:0.85rem; font-weight:bold;">Start Time</label>
+                        <input type="time" id="cls-start" value="08:30" required style="width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:0.85rem; font-weight:bold;">End Time</label>
+                        <input type="time" id="cls-end" value="09:20" required style="width:100%;">
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Block Color (Wheel or Hex)</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="cls-color-wheel" value="#FFB6C1" oninput="syncColorInput(this.value, 'hex')">
+                        <input type="text" id="cls-color-hex" value="#FFB6C1" placeholder="#FFB6C1" style="flex:1;" oninput="syncColorInput(this.value, 'wheel')">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="margin-top:10px;"><i class="fa-solid fa-check"></i> Save Class Block</button>
+            </form>
+        </div>
+    </div>
+
     <!-- STICKER PALETTE -->
     <div id="sticker-palette">
         <span class="sticker-item" onclick="spawnSticker('🌸')">🌸</span>
@@ -772,12 +997,13 @@
             ],
             anecdotals: {},
             selectedStandards: [],
-            timetable: [
-                { time: "9:00 - 10:00", mon: "Math", tue: "Math", wed: "Math", thu: "Math", fri: "Math" },
-                { time: "10:00 - 10:30", mon: "Recess", tue: "Recess", wed: "Recess", thu: "Recess", fri: "Recess" },
-                { time: "10:30 - 11:30", mon: "Language Arts", tue: "Language Arts", wed: "Language Arts", thu: "Language Arts", fri: "Language Arts" },
-                { time: "11:30 - 12:15", mon: "Lunch", tue: "Lunch", wed: "Lunch", thu: "Lunch", fri: "Lunch" },
-                { time: "12:15 - 1:15", mon: "Science", tue: "Art", wed: "Social Studies", thu: "PE", fri: "Music" }
+            // Advanced Chalk-style Blocks Timetable Structure
+            timetableBlocks: [
+                { id: "b1", day: "Mon", name: "Mathematics", type: "Lesson", start: "08:30", end: "09:20", color: "#FF9EAA" },
+                { id: "b2", day: "Mon", name: "Recess Break", type: "Recess", start: "10:00", end: "10:20", color: "#77DD77" },
+                { id: "b3", day: "Mon", name: "Language Arts", type: "Lesson", start: "10:20", end: "11:30", color: "#B39DDB" },
+                { id: "b4", day: "Mon", name: "Yard Duty", type: "Duty", start: "11:30", end: "11:50", color: "#FCE883" },
+                { id: "b5", day: "Tue", name: "Science Lab", type: "Lesson", start: "09:00", end: "10:15", color: "#8FBC8F" }
             ],
             stickers: [],
             stickyNotes: "",
@@ -825,11 +1051,13 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
             initDateDisplay();
+            startDashboardClock();
+            renderDashboardMonthGrid();
             renderMiniCalendar();
             renderYearCalendar(appState.currentYear);
             renderStudentTable();
             initGrowthChart();
-            renderTimetable();
+            renderTimetableSystem();
             renderWeeklyPlanner();
             restoreEditors();
             restoreStickers();
@@ -837,7 +1065,6 @@
         });
 
         function saveState() {
-            // Grab content from editors before saving
             const stickyEditor = document.getElementById('sticky-note-editor');
             if (stickyEditor) appState.stickyNotes = stickyEditor.innerHTML;
             
@@ -847,14 +1074,15 @@
             const mainNotesEditor = document.getElementById('main-notes-editor');
             if (mainNotesEditor) appState.mainNotes = mainNotesEditor.innerHTML;
 
-            localStorage.setItem('kawaii_planner_data', JSON.stringify(appState));
+            localStorage.setItem('planberry_teacher_data', JSON.stringify(appState));
         }
 
         function loadState() {
-            const saved = localStorage.getItem('kawaii_planner_data');
+            const saved = localStorage.getItem('planberry_teacher_data') || localStorage.getItem('kawaii_planner_data');
             if(saved) {
                 try {
-                    appState = Object.assign(appState, JSON.parse(saved));
+                    const parsed = JSON.parse(saved);
+                    appState = Object.assign(appState, parsed);
                 } catch(e) {
                     console.error("Failed to parse saved state", e);
                 }
@@ -881,6 +1109,63 @@
             });
         }
 
+        // --- DASHBOARD LIVE CLOCK & AUTO-MONTH GRID ---
+        function startDashboardClock() {
+            function update() {
+                const now = new Date();
+                let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // 0 becomes 12
+                const clockEl = document.getElementById('dashboard-clock-display');
+                if(clockEl) {
+                    clockEl.innerText = `${hours}:${minutes} ${ampm}`;
+                }
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        function renderDashboardMonthGrid() {
+            const container = document.getElementById('dashboard-auto-month-grid');
+            if(!container) return;
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const monthName = now.toLocaleString('default', { month: 'long' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayDate = now.getDate();
+
+            let daysHtml = '';
+            for(let i = 0; i < firstDay; i++) {
+                daysHtml += '<div class="calendar-day-cell empty"></div>';
+            }
+            for(let d = 1; d <= daysInMonth; d++) {
+                const isToday = d === todayDate ? 'today' : '';
+                daysHtml += `<div class="calendar-day-cell ${isToday}">${d}</div>`;
+            }
+
+            container.innerHTML = `
+                <div class="calendar-month-card">
+                    <div class="calendar-month-title" style="font-size:1.1rem; text-align:left; font-weight:bold; margin-bottom:12px;">${monthName} ${year}</div>
+                    <div class="calendar-days-grid">
+                        <div class="calendar-day-header">Sun</div>
+                        <div class="calendar-day-header">Mon</div>
+                        <div class="calendar-day-header">Tue</div>
+                        <div class="calendar-day-header">Wed</div>
+                        <div class="calendar-day-header">Thu</div>
+                        <div class="calendar-day-header">Fri</div>
+                        <div class="calendar-day-header">Sat</div>
+                        ${daysHtml}
+                    </div>
+                </div>
+            `;
+        }
+
         // --- UI & NAVIGATION ---
         function switchView(viewId) {
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
@@ -889,7 +1174,6 @@
             const target = document.getElementById(`view-${viewId}`);
             if(target) target.classList.add('active');
             
-            // Set active navigation button state
             const navBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => 
                 btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${viewId}'`)
             );
@@ -933,7 +1217,193 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        // --- CALENDAR & TIMETABLE SYSTEM ---
+        // --- ADVANCED CHALK-STYLE TIMETABLE SYSTEM ---
+        function renderTimetableSystem() {
+            // Render 30-minute label increments on left side (8:00 AM to 4:00 PM = 16 half hours)
+            const labelsCol = document.getElementById('time-labels-col');
+            if(labelsCol) {
+                labelsCol.innerHTML = '';
+                let startHour = 8;
+                for(let i = 0; i < 16; i++) {
+                    const h = Math.floor(startHour + (i * 0.5));
+                    const m = (i % 2 === 0) ? "00" : "30";
+                    const displayH = (h > 12) ? h - 12 : h;
+                    const ampm = h >= 12 ? "PM" : "AM";
+                    
+                    const timeDiv = document.createElement('div');
+                    timeDiv.className = 'time-label-slot';
+                    timeDiv.innerText = `${displayH}:${m} ${ampm}`;
+                    labelsCol.appendChild(timeDiv);
+                }
+            }
+
+            // Clear Day Columns
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(day => {
+                const col = document.getElementById(`tt-day-${day}`);
+                if(col) col.innerHTML = '';
+            });
+
+            // Render Timetable Blocks
+            appState.timetableBlocks.forEach(block => {
+                const dayCol = document.getElementById(`tt-day-${block.day}`);
+                if(!dayCol) return;
+
+                // Calculate vertical position and height based on times (Base: 8:00 AM = 0px, 1 min = 1.333px)
+                const startMins = timeToMinutes(block.start) - 480; // 480 = 8:00 AM
+                const endMins = timeToMinutes(block.end) - 480;
+                const duration = Math.max(endMins - startMins, 15);
+
+                const topPx = (startMins / 30) * 40; // 40px per 30 min block slot
+                const heightPx = (duration / 30) * 40;
+
+                const blockEl = document.createElement('div');
+                blockEl.className = 'timetable-block-item';
+                blockEl.style.top = `${topPx}px`;
+                blockEl.style.height = `${heightPx}px`;
+                blockEl.style.backgroundColor = block.color || '#FFB6C1';
+
+                blockEl.innerHTML = `
+                    <button class="block-delete-btn" onclick="deleteTimetableBlock('${block.id}')" title="Remove Class">✕</button>
+                    <div>
+                        <div class="block-title">${block.name}</div>
+                        <div class="block-time">${formatTimeAMPM(block.start)} - ${formatTimeAMPM(block.end)} (${duration}m)</div>
+                    </div>
+                    <div class="block-type">${block.type || 'Lesson'}</div>
+                `;
+                dayCol.appendChild(blockEl);
+            });
+
+            renderDashboardSchedule();
+            renderWeeklyPlanner();
+        }
+
+        function timeToMinutes(timeStr) {
+            if(!timeStr) return 480;
+            const [h, m] = timeStr.split(':').map(Number);
+            return (h * 60) + m;
+        }
+
+        function formatTimeAMPM(timeStr) {
+            if(!timeStr) return '';
+            let [h, m] = timeStr.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12;
+            return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+        }
+
+        function openAddClassModal() {
+            document.getElementById('add-class-modal').style.display = 'flex';
+        }
+
+        function syncColorInput(val, target) {
+            if(target === 'hex') {
+                document.getElementById('cls-color-hex').value = val.toUpperCase();
+            } else {
+                document.getElementById('cls-color-wheel').value = val;
+            }
+        }
+
+        function saveNewClassBlock(e) {
+            e.preventDefault();
+            const name = document.getElementById('cls-name').value;
+            const type = document.getElementById('cls-type').value;
+            const day = document.getElementById('cls-day').value;
+            const start = document.getElementById('cls-start').value;
+            const end = document.getElementById('cls-end').value;
+            const color = document.getElementById('cls-color-hex').value;
+
+            if(timeToMinutes(end) <= timeToMinutes(start)) {
+                alert("End time must be after start time!");
+                return;
+            }
+
+            const newBlock = {
+                id: 'block_' + Date.now(),
+                name, type, day, start, end, color
+            };
+
+            appState.timetableBlocks.push(newBlock);
+            saveState();
+            renderTimetableSystem();
+            closeModal('add-class-modal');
+            document.getElementById('cls-name').value = '';
+        }
+
+        function deleteTimetableBlock(id) {
+            appState.timetableBlocks = appState.timetableBlocks.filter(b => b.id !== id);
+            saveState();
+            renderTimetableSystem();
+        }
+
+        function renderDashboardSchedule() {
+            const container = document.getElementById('dash-schedule-list');
+            if(!container) return;
+
+            // Get current day abbreviation
+            const daysMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const todayAbbr = daysMap[new Date().getDay()];
+
+            const todayBlocks = appState.timetableBlocks
+                .filter(b => b.day === todayAbbr)
+                .sort((a,b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+
+            if(todayBlocks.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted);">No classes scheduled for today (${todayAbbr}). Setup your timetable!</p>`;
+                return;
+            }
+
+            container.innerHTML = todayBlocks.map(b => `
+                <div style="padding:10px; border-radius:10px; background:${b.color}; color:#FFF; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong>${b.name}</strong> (${b.type})
+                        <div style="font-size:0.75rem; opacity:0.9;">${formatTimeAMPM(b.start)} - ${formatTimeAMPM(b.end)}</div>
+                    </div>
+                    <span class="pill-tag" style="background:rgba(255,255,255,0.3); color:#FFF;">${b.day}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderWeeklyPlanner() {
+            const container = document.getElementById('weekly-plan-blocks');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(day => {
+                const col = document.createElement('div');
+                col.style.display = 'flex';
+                col.style.flexDirection = 'column';
+                col.style.gap = '8px';
+
+                const dayBlocks = appState.timetableBlocks
+                    .filter(b => b.day === day)
+                    .sort((a,b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+
+                if(dayBlocks.length === 0) {
+                    col.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px;">No classes</div>';
+                } else {
+                    dayBlocks.forEach(b => {
+                        const block = document.createElement('div');
+                        block.className = 'card';
+                        block.style.padding = '10px';
+                        block.style.backgroundColor = b.color;
+                        block.style.color = '#FFF';
+                        block.style.fontSize = '0.85rem';
+                        block.innerHTML = `
+                            <div style="font-size:0.75rem; opacity:0.9; font-weight:bold;">${formatTimeAMPM(b.start)} - ${formatTimeAMPM(b.end)}</div>
+                            <div style="font-weight:bold; font-family:var(--font-title); font-size:0.95rem; margin-top:3px;">${b.name}</div>
+                            <div style="font-size:0.7rem; text-transform:uppercase; margin-top:2px;">${b.type}</div>
+                        `;
+                        col.appendChild(block);
+                    });
+                }
+                container.appendChild(col);
+            });
+        }
+
+        // --- YEAR CALENDAR NAVIGATION ---
         function renderMiniCalendar() {
             const container = document.getElementById('mini-calendar-container');
             const now = new Date();
@@ -974,6 +1444,7 @@
         function renderYearCalendar(year) {
             document.getElementById('calendar-year-display').innerText = year;
             const container = document.getElementById('year-grid');
+            if(!container) return;
             container.innerHTML = '';
 
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1018,84 +1489,6 @@
             saveState();
         }
 
-        function renderTimetable() {
-            const grid = document.getElementById('timetable-editor-grid');
-            // Remove existing time slot rows
-            const oldSlots = grid.querySelectorAll('.time-slot-row');
-            oldSlots.forEach(s => s.remove());
-
-            let dashListHtml = '';
-
-            appState.timetable.forEach((row, idx) => {
-                const timeCol = document.createElement('div');
-                timeCol.className = 'time-col time-slot-row';
-                timeCol.innerText = row.time;
-                grid.appendChild(timeCol);
-
-                ['mon', 'tue', 'wed', 'thu', 'fri'].forEach(day => {
-                    const slot = document.createElement('div');
-                    slot.className = 'time-slot time-slot-row';
-                    slot.innerHTML = `
-                        <div class="schedule-block" contenteditable="true" onblur="updateTimetableCell(${idx}, '${day}', this.innerText)">
-                            ${row[day] || ''}
-                        </div>
-                    `;
-                    grid.appendChild(slot);
-                });
-
-                dashListHtml += `<div style="padding:6px 0; border-bottom:1px dashed var(--border-color); display:flex; justify-between;">
-                    <strong>${row.time}</strong> <span>${row.mon || 'Free'}</span>
-                </div>`;
-            });
-
-            const dashList = document.getElementById('dash-schedule-list');
-            if (dashList) dashList.innerHTML = dashListHtml || '<p style="color:var(--text-muted);">No schedule configured yet. Setup your timetable!</p>';
-        }
-
-        function updateTimetableCell(rowIdx, day, value) {
-            if(appState.timetable[rowIdx]) {
-                appState.timetable[rowIdx][day] = value.trim();
-                saveState();
-                renderWeeklyPlanner();
-            }
-        }
-
-        function addTimetableBlock() {
-            const time = prompt("Enter Time Block (e.g. 1:15 - 2:00):", "1:15 - 2:00");
-            if(time) {
-                appState.timetable.push({ time: time, mon: "Activity", tue: "Activity", wed: "Activity", thu: "Activity", fri: "Activity" });
-                saveState();
-                renderTimetable();
-                renderWeeklyPlanner();
-            }
-        }
-
-        function renderWeeklyPlanner() {
-            const container = document.getElementById('weekly-plan-blocks');
-            if(!container) return;
-            container.innerHTML = '';
-
-            ['mon', 'tue', 'wed', 'thu', 'fri'].forEach(day => {
-                const col = document.createElement('div');
-                col.style.display = 'flex';
-                col.style.flexDirection = 'column';
-                col.style.gap = '8px';
-
-                appState.timetable.forEach(row => {
-                    const block = document.createElement('div');
-                    block.className = 'card';
-                    block.style.padding = '10px';
-                    block.style.fontSize = '0.85rem';
-                    block.innerHTML = `
-                        <div style="font-size:0.75rem; color:var(--text-muted); font-weight:bold;">${row.time}</div>
-                        <div style="font-weight:bold; margin-top:3px; color:var(--primary-dark);">${row[day] || ''}</div>
-                    `;
-                    col.appendChild(block);
-                });
-                container.appendChild(col);
-            });
-        }
-
         // --- BC STANDARDS & MODAL ---
         function openStandardsModal() {
             loadCurriculumOptions();
@@ -1109,7 +1502,7 @@
             container.innerHTML = '';
 
             const items = (BC_CURRICULUM[grade] && BC_CURRICULUM[grade][subject]) || ["General BC Curriculum Outcome Standard"];
-            items.forEach((item, idx) => {
+            items.forEach((item) => {
                 const label = document.createElement('label');
                 label.style.display = 'block';
                 label.style.marginBottom = '6px';
@@ -1217,7 +1610,6 @@
                 
                 range.insertNode(span);
                 
-                // Move cursor after badge
                 range.setStartAfter(span);
                 range.setEndAfter(span);
                 selection.removeAllRanges();
@@ -1237,7 +1629,6 @@
             appState.students.forEach((std) => {
                 const tr = document.createElement('tr');
                 
-                // Determine 4-point scale category
                 let scaleText = "Extending (Ext)";
                 if(std.grade < 50) scaleText = "Emerging (Emerg)";
                 else if(std.grade < 73) scaleText = "Developing (Dev)";
@@ -1390,7 +1781,7 @@
             const element = document.getElementById('printable-weekly-area');
             const opt = {
                 margin:       0.5,
-                filename:     'KawaiiPlanner_Weekly.pdf',
+                filename:     'Planberry_Weekly.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
@@ -1403,7 +1794,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
             const dlAnchorElem = document.createElement('a');
             dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", `kawaii_planner_backup_${Date.now()}.json`);
+            dlAnchorElem.setAttribute("download", `planberry_backup_${Date.now()}.json`);
             dlAnchorElem.click();
         }
 
